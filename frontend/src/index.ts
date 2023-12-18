@@ -2,18 +2,17 @@
 import './global.css'
 // Import stimulus Application object
 import { Application } from '@hotwired/stimulus'
+import AddTODOController from './controllers/add-todo-controller'
 
 // update the global window type. This is needed for the window.stimulus line below.
 // otherwise, the transpiler complains
 declare global {
-    interface Window {
-        Stimulus: Application
-    }
+  interface Window {
+    Stimulus: Application
+  }
 }
 
 window.Stimulus = Application.start()
 const Stimulus = window.Stimulus
 
-// is this thing on?
-const message: string = "Hello, world!"
-console.log(message)
+Stimulus.register('add_todo', AddTODOController)

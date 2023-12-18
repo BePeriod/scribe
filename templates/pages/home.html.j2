@@ -11,7 +11,8 @@
             <p>Loading...</p>
         </turbo-frame>
     </div>
-    <form action="/todos" method="POST" class="mt-4 flex rounded-md shadow-sm items-center" >
+    <form data-controller="add_todo" data-action="turbo:submit-end->add_todo#reset"
+        action="/todos" method="POST" class="mt-4 flex rounded-md shadow-sm items-center" >
         <div class="grow focus-within:z-10">
             <input type="text" name="text" class="block w-full rounded-none rounded-l-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="ToDo">
         </div>

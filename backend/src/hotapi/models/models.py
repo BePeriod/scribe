@@ -1,5 +1,6 @@
 import inspect
-from typing import Optional, Annotated
+from typing import Annotated, Optional
+
 from fastapi import Form
 from pydantic import BaseModel
 

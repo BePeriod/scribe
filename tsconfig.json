@@ -20,10 +20,8 @@
     "resolveJsonModule": true,
     "module": "ESNext",
     "target": "ES6",
-    "rootDir": "frontend/src",
+
     "outDir": "./static/dist"
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
