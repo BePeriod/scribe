@@ -1,26 +1,22 @@
 {% extends "layout/base.html.j2" %}
 
 {% block title %}
-    Home Page
+  Home Page
 {% endblock title %}
 {% block content %}
-<div class="max-w-3xl my-8">
-    <h2 class="bg-indigo-500 text-white font-bold p-2 text-2xl">Hotwire ToDo Demo</h2>
-    <div class="p-2 border">
-        <turbo-frame id="todos" src="/todos">
-            <p>Loading...</p>
-        </turbo-frame>
+  <div class="max-w-3xl py-8 flex flex-col items-center h-full">
+    <h1 class="pb-8 text-center text-2xl font-semibold sm:pb-16 ">
+      Record your message
+    </h1>
+    <div class="grow flex flex-1 items-center">
+      <button class="bg-emerald-500 p-4 rounded-full text-white shadow-lg drop-shadow-md">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+             data-slot="icon" class="w-12 h-12">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z" />
+        </svg>
+
+      </button>
     </div>
-    <form data-controller="add_todo" data-action="turbo:submit-end->add_todo#reset"
-        action="/todos" method="POST" class="mt-4 flex rounded-md shadow-sm items-center" >
-        <div class="grow focus-within:z-10">
-            <input type="text" name="text" class="block w-full rounded-none rounded-l-md border-0 py-1.5 pl-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="ToDo">
-        </div>
-        <button type="submit" class="relative -ml-px inline-flex items-center gap-x-1.5 rounded-r-md px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-gray-300 bg-indigo-500">
-            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-        </button>
-    </form>
-</div>
+  </div>
 {% endblock content %}

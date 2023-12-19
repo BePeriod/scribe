@@ -3,7 +3,7 @@
   <component name="Black">
     <option name="enabledOnReformat" value="true" />
     <option name="pathToExecutable" value="/usr/bin/black" />
-    <option name="sdkName" value="Poetry (operation-hotapi)" />
+    <option name="sdkName" value="Poetry (scribe)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (operation-hotapi)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Poetry (scribe)" project-jdk-type="Python SDK" />
 </project>
