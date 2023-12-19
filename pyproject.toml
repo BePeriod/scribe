@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "operation-hotapi"
+name = "hotapi"
 version = "0.1.0"
 description = "A fullstack micro-framework using FastAPI and Hotwire"
 authors = ["Shane Scanlon <shane@turtlestack.dev>"]
