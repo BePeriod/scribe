@@ -31,3 +31,30 @@ class ToDo(BaseModel):
     id: Optional[int] = None
     text: str
     is_done: Optional[bool] = False
+
+
+class Team(BaseModel):
+    id: str
+    name: str
+    image: Optional[str] = None
+
+
+class User(BaseModel):
+    id: str
+    real_name: str
+    real_name_normalized: str
+    first_name: str
+    last_name: str
+    display_name: Optional[str] = None
+    image: Optional[str] = None
+
+
+class Channel(BaseModel):
+    id: str
+    name: str
+
+
+class Recording(BaseModel):
+    id: str
+    file_path: str
+    transcription: Optional[str] = None
