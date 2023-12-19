@@ -56,7 +56,7 @@ This wraps the FastAPI server in a proxy running on port 3000.
 To start the uvicorn server on port 8000 run the following.
 
 ```shell
-$ poetry run uvicorn hotapi.main:app --reload
+$ poetry run uvicorn scribe.main:app --reload
 ```
 
 © 2023 TurtleStack Development

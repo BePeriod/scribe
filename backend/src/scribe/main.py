@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 # we will define this router in a moment
-from hotapi.routers import pages
+from scribe.routers import pages
 
 # initialize FastAPI
 app = FastAPI()

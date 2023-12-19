@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from hotapi.models.models import ToDo
+from scribe.models.models import ToDo
 
 # initialize the frontend router
 router = APIRouter()

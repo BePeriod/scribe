@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "hotapi"
+name = "scribe"
 version = "0.1.0"
-description = "A fullstack micro-framework using FastAPI and Hotwire"
+description = "A Slack app for transcription and translation"
 authors = ["Shane Scanlon <shane@turtlestack.dev>"]
-license = "MIT"
+license = "AGPL-3.0"
 readme = "README.md"
-packages = [{include = "hotapi", from = "backend/src" }]
+packages = [{include = "scribe", from = "backend/src" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
