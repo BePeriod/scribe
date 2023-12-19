@@ -18,25 +18,25 @@ The `models` folder contains the Pydantic models.
 ### Frontend
 
 The frontend folder houses the TypeScript files
-as well as a global.css file for Tailwind.
-The is also a controllers folder is where [Stimulus Controllers](https://stimulus.hotwired.dev/reference/controllers) reside.
+as well as a `global.css` file for Tailwind.
+There is also a controllers folder where [Stimulus Controllers](https://stimulus.hotwired.dev/reference/controllers) reside.
 
 ### Templates
 
 All views are implemented as Jinja2 templates. These reside in the templates folder.
 Within that are four additional folders.
 
-- layout: This is where the structural markup lives.
-- pages: This houses individual page view templates.
-- frames: This is where the [Turbo Frame](https://turbo.hotwired.dev/handbook/frames) templates live.
-- streams: This is where the [Turbo Stream](https://turbo.hotwired.dev/handbook/streams) templates live.
+- `layout`: This is where the structural markup lives.
+- `pages`: This houses individual page view templates.
+- `frames`: This is where the [Turbo Frame](https://turbo.hotwired.dev/handbook/frames) templates live.
+- `streams`: This is where the [Turbo Stream](https://turbo.hotwired.dev/handbook/streams) templates live.
 
 ### Static Assets
 
 The static folder is where all publicly served assets will go.
 This is also where the frontend code gets built.
 
-## Package Managers
+## Tooling
 
 Poetry is used for Python package management.
 pNPM manages the frontend dependencies.
