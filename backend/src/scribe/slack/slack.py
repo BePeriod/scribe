@@ -3,13 +3,14 @@ from typing import List
 import slack_sdk
 from slack_bolt import App
 
-from scribe.auth.auth import redirect_uri
 from scribe.config.settings import settings
 from scribe.models.models import Channel, Team, User
 
 __slack = App(
     token=settings.SLACK_USER_TOKEN, signing_secret=settings.SLACK_SIGNING_SECRET
 )
+
+redirect_uri = f"{ settings.SITE_URL }/auth/redirect"
 
 
 def access_token(code: str) -> str:

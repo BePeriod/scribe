@@ -7,7 +7,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import RedirectResponse
 
 from scribe import config
-from scribe.auth.auth import NotAuthenticatedException
+from scribe.exceptions import NotAuthenticatedException
 from scribe.config.settings import settings
 from scribe.dependencies import get_session
 from scribe.routers import pages

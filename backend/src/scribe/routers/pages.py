@@ -12,6 +12,7 @@ from scribe.config.settings import settings
 from scribe.dependencies import session_user, get_session
 from scribe.session.session import Session
 from scribe.slack import slack
+import secrets
 
 # initialize the frontend router
 router = APIRouter()
@@ -33,16 +34,16 @@ async def home(request: Request, user: Annotated[str, Depends(session_user)]):
 
 @router.get("/login", response_class=HTMLResponse)
 async def login(request: Request, session: Annotated[Session, Depends(get_session)]):
-    state = auth.secret()
+    state = secrets.token_urlsafe(16)
     session.set("state", state)
-    nonce = auth.secret()
+    nonce = secrets.token_urlsafe(16)
     session.set("nonce", nonce)
     auth_link = (
         f"{settings.SLACK_AUTH_URL}?scope={'%20'.join(settings.USER_SCOPES)}"
         f"&response_type=code"
         f"&state={ state }"
         f"&nonce={ nonce }"
-        f"&redirect_uri={auth.redirect_uri}"
+        f"&redirect_uri={slack.redirect_uri}"
         f"&client_id={settings.SLACK_CLIENT_ID}"
     )
 

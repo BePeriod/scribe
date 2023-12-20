@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Depends
 from starlette.requests import Request
 
-from scribe.auth.auth import NotAuthenticatedException
+from scribe.exceptions import NotAuthenticatedException
 from scribe.models.models import User
 from scribe.session.session import Session
 from scribe.session.session import SessionStore
