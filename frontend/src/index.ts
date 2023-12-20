@@ -2,7 +2,7 @@
 import './global.css'
 // Import stimulus Application object
 import { Application } from '@hotwired/stimulus'
-import AddTODOController from './controllers/add-todo-controller'
+import RecorderController from './controllers/recorder'
 
 // update the global window type. This is needed for the window.stimulus line below.
 // otherwise, the transpiler complains
@@ -15,4 +15,4 @@ declare global {
 window.Stimulus = Application.start()
 const Stimulus = window.Stimulus
 
-Stimulus.register('add_todo', AddTODOController)
+Stimulus.register('recorder', RecorderController)
