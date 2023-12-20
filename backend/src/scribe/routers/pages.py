@@ -2,12 +2,11 @@ import datetime
 import logging
 import os
 import secrets
-import tempfile
 from pathlib import Path
 from typing import Annotated
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sse_starlette.sse import EventSourceResponse
@@ -99,28 +98,17 @@ async def transcription_event_generator(request: Request, recording: Recording):
             logging.debug("Request disconnected")
             break
 
-        text = await transcribe(recording)
-        logging.debug("Transcription completed. Disconnecting now")
-        data = _templates.TemplateResponse(
-            "streams/transcription.html.j2",
-            {"request": request, "text": text},
-        )
-        yield {"event": "end", "data": data}
+        try:
+            recording.transcription = transcribe(recording.file_path)
+            logging.debug("Transcription completed. Disconnecting now")
+            data = _templates.get_template(
+                "streams/transcription_complete.html.j2"
+            ).render({"request": request, "recording": recording})
+            yield {"event": "message", "data": data}
+        except RuntimeError as err:
+            logging.warning(f"error transcribing audio: {err}")
+            yield {"event": "error", "data": err}
         break
-
-
-def audio_upload(content_type: str = Header(...)):
-    """Require request MIME-type to be application/vnd.api+json"""
-
-    # flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm.
-    allowed_mime_types = ["audio/mpeg", "audio/ogg", "audio/wav", "audio/flac"]
-
-    if content_type not in allowed_mime_types:
-        raise HTTPException(
-            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-            f"Unsupported media type: {content_type}."
-            f" It must be one of these types: {', '.join(allowed_mime_types)}",
-        )
 
 
 @router.post("/upload")
@@ -133,16 +121,16 @@ async def upload(
     allowed_mime_types = ["audio/mpeg", "audio/ogg", "audio/wav", "audio/flac"]
     if audio_file.content_type not in allowed_mime_types:
         logging.warning(f"invalid content-type: {audio_file.content_type}")
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Unsupported file format")
+        raise HTTPException(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, "Unsupported file format"
+        )
 
     file_id = uuid4()
-    temp_dir = tempfile.TemporaryDirectory()
-
-    file_content = await audio_file.read()
-    parent_dir = os.path.join(temp_dir.name, session.id)
+    parent_dir = os.path.join(settings.UPLOAD_PATH, session.id)
     Path(parent_dir).mkdir(parents=True, exist_ok=True)
     file_path = os.path.join(parent_dir, f"{file_id }.ogg")
 
+    file_content = await audio_file.read()
     # Save the content to the file
     with open(file_path, "wb") as f:
         f.write(file_content)
@@ -174,4 +162,7 @@ async def transcribe_recording(
 
     event_generator = transcription_event_generator(request, recording)
 
-    return EventSourceResponse(event_generator)
+    return EventSourceResponse(
+        event_generator,
+        headers={"Content-Type": "text/event-stream"},
+    )

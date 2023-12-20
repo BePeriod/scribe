@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     SLACK_BOT_TOKEN: str = "your_bot_token"
     SLACK_USER_TOKEN: str = "your_user_token"
     USER_SCOPES: List[str] = ["openid"]
+    UPLOAD_PATH: str = "/tmp/scribe"
 
     class Config:
         env_prefix = "SCRIBE_"

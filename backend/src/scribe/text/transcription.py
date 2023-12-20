@@ -13,7 +13,6 @@ def subscribe(callback: Callable[[Recording], None]):
     _listeners.append(callback)
 
 
-async def transcribe(recording: Recording) -> str:
-    result = await model.Transcribe(recording.file_path)
-    recording.transcription = result["text"]
-    return recording.transcription
+def transcribe(file_path: str) -> str:
+    result = model.transcribe(file_path)
+    return result["text"]
