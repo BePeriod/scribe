@@ -16,7 +16,8 @@ export default class extends Controller {
   declare readonly playIconTarget: SVGElement
   declare readonly stopIconTarget: SVGElement
   declare readonly loadingIconTarget: SVGElement
-  static targets = ['btn', 'disabledIcon', 'playIcon', 'stopIcon', 'loadingIcon']
+  declare readonly audioInputTarget: HTMLInputElement
+  static targets = ['btn', 'disabledIcon', 'playIcon', 'stopIcon', 'loadingIcon', 'audioInput']
 
   async initialize(): Promise<void> {
     if (
@@ -37,14 +38,14 @@ export default class extends Controller {
           this.showIcon('stop')
         }
 
-        this.recorder.onstop = async () => {
+        this.recorder.onstop = () => {
           this.showIcon('play')
 
           this.audioRecording = new Blob(this.audioChunks, {
             type: 'audio/ogg; codecs=opus',
           })
 
-          await this.uploadRecording()
+          this.uploadRecording()
 
           this.audioChunks = []
         }
@@ -77,19 +78,19 @@ export default class extends Controller {
     }
   }
 
-  async uploadRecording(): Promise<void> {
+  uploadRecording(): void {
     if (this.audioRecording) {
       this.showIcon('loading')
       try {
-        const response = await window.fetch('/api/v1/upload', {
-          method: 'POST',
-          body: this.audioRecording,
-          headers: {
-            'Content-Type': 'audio/ogg',
-          },
+        const file = new File([this.audioRecording], 'recording.ogg', {
+          type: 'audio/ogg',
+          lastModified: new Date().getTime(),
         })
+        const container = new DataTransfer()
+        container.items.add(file)
+        this.audioInputTarget.files = container.files
 
-        console.log('uploaded', response)
+        this.audioInputTarget.form?.requestSubmit()
       } catch (error) {
         console.error('request failed', error)
       } finally {

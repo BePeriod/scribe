@@ -1,6 +1,7 @@
 # HotAPI - FastAPI, Hotwired
 
-This repository is a skeleton project for integrating [FastAPI](https://fastapi.tiangolo.com/) with [Hotwire](https://hotwired.dev/).
+This repository is a skeleton project for integrating [FastAPI](https://fastapi.tiangolo.com/)
+with [Hotwire](https://hotwired.dev/).
 It is the accompaniment to a tutorial article located [here](https://www.turtlestack.dev/articles/hotwiring-fast-api).
 
 Please refer to the article for an in-depth explanation of the project.
@@ -19,7 +20,8 @@ The `models` folder contains the Pydantic models.
 
 The frontend folder houses the TypeScript files
 as well as a `global.css` file for Tailwind.
-There is also a controllers folder where [Stimulus Controllers](https://stimulus.hotwired.dev/reference/controllers) reside.
+There is also a controllers folder where [Stimulus Controllers](https://stimulus.hotwired.dev/reference/controllers)
+reside.
 
 ### Templates
 
@@ -28,7 +30,7 @@ Within that are four additional folders.
 
 - `layout`: This is where the structural markup lives.
 - `pages`: This houses individual page view templates.
-- `frames`: This is where the [Turbo Frame](https://turbo.hotwired.dev/handbook/frames) templates live.
+- `components`: This is where the [Turbo Frame](https://turbo.hotwired.dev/handbook/components) templates live.
 - `streams`: This is where the [Turbo Stream](https://turbo.hotwired.dev/handbook/streams) templates live.
 
 ### Static Assets

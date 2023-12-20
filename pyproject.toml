@@ -5,7 +5,7 @@ description = "A Slack app for transcription and translation"
 authors = ["Shane Scanlon <shane@turtlestack.dev>"]
 license = "AGPL-3.0"
 readme = "README.md"
-packages = [{include = "scribe", from = "backend/src" }]
+packages = [{ include = "scribe", from = "backend/src" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -14,12 +14,11 @@ uvicorn = "^0.24.0.post1"
 Jinja2 = "^3.1.2"
 pydantic = "^2.5.2"
 python-multipart = "^0.0.6"
-isort = "^5.13.2"
-flake8 = "^6.1.0"
-pre-commit = "^3.6.0"
 pydantic-settings = "^2.1.0"
 itsdangerous = "^2.1.2"
 slack-bolt = "^1.18.1"
+openai-whisper = "^20231117"
+sse-starlette = "^1.8.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
@@ -27,6 +26,9 @@ pytest-cov = "^4.1.0"
 pytest-mock = "^3.12.0"
 httpx = "^0.25.2"
 black = "^23.12.0"
+isort = "^5.13.2"
+flake8 = "^6.1.0"
+pre-commit = "^3.6.0"
 
 [tool.isort]
 profile = "black"
