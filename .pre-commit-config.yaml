@@ -13,3 +13,11 @@ repos:
     rev: 6.1.0
     hooks:
       - id: flake8
+  - repo: local
+    hooks:
+      - id: husky-run-pre-commit
+        name: husky
+        language: system
+        entry: .husky/pre-commit
+        pass_filenames: false
+        always_run: true
