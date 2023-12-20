@@ -12,7 +12,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sse_starlette.sse import EventSourceResponse
 from starlette import status
-from starlette.responses import RedirectResponse, Response
+from starlette.responses import RedirectResponse
 
 from scribe.config.settings import settings
 from scribe.dependencies import get_session, session_user
