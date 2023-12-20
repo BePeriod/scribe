@@ -1,5 +1,7 @@
-from starlette.datastructures import State
 import secrets
+
+from starlette.datastructures import State
+
 from scribe.config.settings import settings
 
 

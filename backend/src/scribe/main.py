@@ -1,15 +1,15 @@
 import logging
 
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from starlette import status
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import RedirectResponse
 
 from scribe import config
-from scribe.exceptions import NotAuthenticatedException
 from scribe.config.settings import settings
 from scribe.dependencies import get_session
+from scribe.exceptions import NotAuthenticatedException
 from scribe.routers import pages
 
 config.init()

@@ -1,8 +1,6 @@
 from typing import Callable
 
-
 import whisper
-
 
 from scribe.models.models import Recording
 

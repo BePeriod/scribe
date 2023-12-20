@@ -1,24 +1,25 @@
 import datetime
 import logging
 import os
+import secrets
 import tempfile
 from pathlib import Path
 from typing import Annotated
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, Request, HTTPException, Header, UploadFile
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from sse_starlette.sse import EventSourceResponse
 from starlette import status
 from starlette.responses import RedirectResponse, Response
-from sse_starlette.sse import EventSourceResponse
+
 from scribe.config.settings import settings
-from scribe.dependencies import session_user, get_session
-from scribe.models.models import User, Recording
+from scribe.dependencies import get_session, session_user
+from scribe.models.models import Recording, User
 from scribe.session.session import Session
 from scribe.slack import slack
 from scribe.text.transcription import transcribe
-import secrets
 
 # initialize the frontend router
 router = APIRouter()
