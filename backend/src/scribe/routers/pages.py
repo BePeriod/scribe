@@ -173,15 +173,16 @@ async def transcribe_recording(
 async def publish(
     formatted_message: Annotated[str, Form()],
     request: Request,
-    user: Annotated[User, Depends(session_user)],
+    _user: Annotated[User, Depends(session_user)],
     client: Annotated[SlackClient, Depends(slack_client)],
+    pin_to_channel: Annotated[bool, Form()] = False,
 ):
     message = formatted_message.strip()
     for target in settings.TARGET_LANGUAGES:
-        translated = text.translate(target, message)
-        client.publish(translated, target, user)
+        translated = text.translate(message, target)
+        client.publish(translated, target, pin_to_channel)
 
-    client.publish(message, settings.SOURCE_LANGUAGE, user)
+    client.publish(message, settings.SOURCE_LANGUAGE, pin_to_channel)
 
     return _templates.TemplateResponse(
         "streams/message_published.html.j2",

@@ -91,6 +91,31 @@ class SlackClient:
 
         return channel_list
 
-    def publish(self, text: str, target: str, user: User) -> None:
-        # self.client.chat_postMessage()
-        logging.debug(f"message posted: {target} - {user.real_name}")
+    def publish(self, html: str, target: str, pin_to_channel: bool) -> None:
+        formatted = format_message(html)
+        channel = settings.SLACK_CHANNEL_LANGUAGE_MAP.get(target, None)
+        if not channel:
+            raise SlackError(f"Channel not found for language: {target}")
+
+        if settings.DEVELOPMENT_MODE:
+            formatted = (
+                f"TEST MESSAGE FOR: {target}"
+                f"\n---------------------------------\n"
+                f"{formatted}"
+            )
+
+        self.client.chat_postMessage(
+            channel=channel, text=formatted, as_user=True, pin_to_channel=pin_to_channel
+        )
+
+
+def format_message(html: str) -> str:
+    html = html.replace("<p>", "\n\n")
+    html = html.replace("</p>", "\n\n")
+    html = html.replace("\n\n\n\n", "\n\n")
+    html = html.replace("<strong>", "*")
+    html = html.replace("</strong>", "*")
+    html = html.replace("<em>", "_")
+    html = html.replace("</em>", "_")
+
+    return html.strip()

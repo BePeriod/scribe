@@ -34,7 +34,17 @@
           {{ recording.transcription }}
         </textarea>
       <input type="hidden" name="formatted_message" data-transcription-target="formattedMessage">
-      <div class="text-right">
+      <div class="flex space-x-2 items-center">
+        <div class="relative flex items-start grow">
+          <div class="flex h-6 items-center">
+            <input id="pin_to_channel" aria-describedby="comments-description" name="pin_to_channel" type="checkbox"
+                   checked
+                   class="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-600">
+          </div>
+          <div class="ml-2 text-sm leading-6">
+            <label for="pin_to_channel" class="font-medium text-gray-900">Pin to channel</label>
+          </div>
+        </div>
         <a href="/"
            class="rounded-md bg-gray-50 px-3.5 py-2.5 text-sm font-semibold text-gray-600 shadow-sm hover:bg-gray-100"
         >

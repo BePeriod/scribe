@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     SESSION_KEY: str = "some-random-string"
     DEVELOPMENT_MODE: bool = False
     DEV_SESSION_ID: str = "867-5309"
+    DEEPL_API_KEY: str = "your-deepl-api-key"
     SLACK_AUTH_URL: str = "https://slack.com/openid/connect/authorize"
     SLACK_TOKEN_URL: str = "https://slack.com/api/openid.connect.token"
     SLACK_CLIENT_ID: str = "your_client_id"
@@ -20,7 +21,8 @@ class Settings(BaseSettings):
     USER_SCOPES: List[str] = ["openid"]
     UPLOAD_PATH: str = "/tmp/scribe"
     SOURCE_LANGUAGE: str = "en"
-    TARGET_LANGUAGES: list[str] = ["es", "fr", "it", "ru", "pt-BR"]
+    TARGET_LANGUAGES: list[str] = ["es", "fr", "it", "ru", "pt"]
+    SLACK_CHANNEL_LANGUAGE_MAP: dict[str, str] = {}
 
     class Config:
         env_prefix = "SCRIBE_"

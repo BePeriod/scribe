@@ -286,6 +286,23 @@ files = [
 toml = ["tomli"]
 
 [[package]]
+name = "deepl"
+version = "1.16.1"
+description = "Python library for the DeepL API."
+optional = false
+python-versions = ">=3.6.2,<4"
+files = [
+    {file = "deepl-1.16.1-py3-none-any.whl", hash = "sha256:17bd19a28850a10513377afc1b0e28ee907502e4a4a547d616bfa9cf65dfd4ea"},
+    {file = "deepl-1.16.1.tar.gz", hash = "sha256:b34d4a8644c9e62a7a9c24acfe80a07717bd0a3b2be77b633a10d5d4fe748dcd"},
+]
+
+[package.dependencies]
+requests = ">=2,<3"
+
+[package.extras]
+keyring = ["keyring (>=23.4.1,<24.0.0)"]
+
+[[package]]
 name = "distlib"
 version = "0.3.8"
 description = "Distribution utilities"
@@ -1775,4 +1792,4 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "05d92a2edc57771e3b481299d6b66011a25259e89c947723e1c2fe8d84f9b563"
+content-hash = "1ce83569bc8506689970f22054bb2da642f368179c713152a914434a41900667"
