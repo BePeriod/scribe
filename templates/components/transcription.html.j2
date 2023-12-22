@@ -1,11 +1,53 @@
 <div
   id="content"
-  class="max-w-3xl py-8 flex flex-col items-center h-full"
+  class="max-w-3xl p-8 h-full mx-auto"
+  data-controller="transcription"
 >
-  <h1 class="pb-8 text-center text-2xl font-semibold sm:pb-16 ">
-    Transcription complete
-  </h1>
-  <div class="grow">
-    <p id="recording-transcription" class="p-8">{{ recording.transcription }}</p>
+  <span
+    data-transcription-target="loadingIcon"
+    class="bg-emerald-500 p-4 rounded-full text-white shadow-lg drop-shadow-md absolute inset-1/2">
+      <svg
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="animate-spin w-12 h-12"
+      >
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+    </span>
+  <div
+    id="text-editor"
+    data-transcription-target="textEditor"
+    class="h-full"
+  >
+    <form action="/publish" method="POST" class="flex flex-col h-full space-y-4">
+      <label class="sr-only">Message</label>
+      <textarea
+        data-transcription-target="messageInput"
+        id="messageInput"
+        name="messageInput"
+        class="grow"
+      >
+          {{ recording.transcription }}
+        </textarea>
+      <input type="hidden" name="formatted_message" data-transcription-target="formattedMessage">
+      <div class="text-right">
+        <a href="/"
+           class="rounded-md bg-gray-50 px-3.5 py-2.5 text-sm font-semibold text-gray-600 shadow-sm hover:bg-gray-100"
+        >
+          Cancel
+        </a>
+        <button
+          data-action="transcription#publish"
+          type="button"
+          class="rounded-md bg-emerald-50 px-3.5 py-2.5 text-sm font-semibold text-emerald-600 shadow-sm hover:bg-emerald-100"
+        >
+          Publish
+        </button>
+      </div>
+    </form>
   </div>
 </div>

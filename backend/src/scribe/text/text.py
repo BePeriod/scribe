@@ -16,3 +16,7 @@ def subscribe(callback: Callable[[Recording], None]):
 def transcribe(file_path: str) -> str:
     result = model.transcribe(file_path)
     return result["text"]
+
+
+def translate(text: str, target: str) -> str:
+    return f"{text}:{target}"

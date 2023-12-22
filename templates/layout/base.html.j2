@@ -13,10 +13,11 @@
 
 <body class="h-full flex flex-col text-gray-500">
 {% include "layout/header.html.j2" %}
-<main class="grow self-center">
+<main class="grow">
   {% block content %}
   {% endblock content %}
 </main>
 {% include "layout/footer.html.j2" %}
+<script src="{{ url_for('static', path='/vendor/tinymce/tinymce.min.js') }}"></script>
 </body>
 </html>

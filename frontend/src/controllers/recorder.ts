@@ -58,7 +58,6 @@ export default class extends Controller {
   }
 
   permissionGrantedValueChanged(): void {
-    console.log('permission change')
     this.btnTarget.disabled = !this.permissionGrantedValue
     if (this.permissionGrantedValue) {
       this.showIcon('play')
@@ -70,10 +69,8 @@ export default class extends Controller {
   toggle(): void {
     console.log('toggle', this.recorder)
     if (this.recorder?.state === 'recording') {
-      console.log('stopping recording')
       this.recorder.stop()
     } else {
-      console.log('starting recording')
       this.recorder?.start()
     }
   }

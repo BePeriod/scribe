@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     SLACK_USER_TOKEN: str = "your_user_token"
     USER_SCOPES: List[str] = ["openid"]
     UPLOAD_PATH: str = "/tmp/scribe"
+    SOURCE_LANGUAGE: str = "en"
+    TARGET_LANGUAGES: list[str] = ["es", "fr", "it", "ru", "pt-BR"]
 
     class Config:
         env_prefix = "SCRIBE_"

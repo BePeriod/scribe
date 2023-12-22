@@ -7,6 +7,7 @@ from starlette.requests import Request
 from scribe.exceptions import NotAuthenticatedException
 from scribe.models.models import User
 from scribe.session.session import Session, SessionStore
+from scribe.slack.slack import SlackClient
 
 session_store = SessionStore()
 
@@ -37,3 +38,12 @@ def session_user(session: Annotated[Session, Depends(get_session)]) -> User:
         raise NotAuthenticatedException("Not authenticated")
 
     return user
+
+
+def slack_client(session: Annotated[Session, Depends(get_session)]) -> SlackClient:
+    token = session.get("access_token")
+    if token is None:
+        raise NotAuthenticatedException("Not authenticated")
+
+    client = SlackClient(token)
+    return client

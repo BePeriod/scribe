@@ -5,6 +5,7 @@ import * as Turbo from '@hotwired/turbo' /* eslint-disable-line @typescript-esli
 import { Application } from '@hotwired/stimulus'
 import RecorderController from './controllers/recorder'
 import RecordingController from './controllers/recording'
+import TranscriptionController from './controllers/transcription'
 
 // update the global window type. This is needed for the window.stimulus line below.
 // otherwise, the transpiler complains
@@ -19,3 +20,4 @@ const Stimulus = window.Stimulus
 
 Stimulus.register('recorder', RecorderController)
 Stimulus.register('recording', RecordingController)
+Stimulus.register('transcription', TranscriptionController)

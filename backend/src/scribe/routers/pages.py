@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Annotated
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sse_starlette.sse import EventSourceResponse
@@ -14,11 +14,12 @@ from starlette import status
 from starlette.responses import RedirectResponse
 
 from scribe.config.settings import settings
-from scribe.dependencies import get_session, session_user
+from scribe.dependencies import get_session, session_user, slack_client
 from scribe.models.models import Recording, User
 from scribe.session.session import Session
 from scribe.slack import slack
-from scribe.text.transcription import transcribe
+from scribe.slack.slack import SlackClient
+from scribe.text import text
 
 # initialize the frontend router
 router = APIRouter()
@@ -99,7 +100,7 @@ async def transcription_event_generator(request: Request, recording: Recording):
             break
 
         try:
-            recording.transcription = transcribe(recording.file_path)
+            recording.transcription = text.transcribe(recording.file_path)
             logging.debug("Transcription completed. Disconnecting now")
             data = _templates.get_template(
                 "streams/transcription_complete.html.j2"
@@ -165,4 +166,26 @@ async def transcribe_recording(
     return EventSourceResponse(
         event_generator,
         headers={"Content-Type": "text/event-stream"},
+    )
+
+
+@router.post("/publish")
+async def publish(
+    formatted_message: Annotated[str, Form()],
+    request: Request,
+    user: Annotated[User, Depends(session_user)],
+    client: Annotated[SlackClient, Depends(slack_client)],
+):
+    message = formatted_message.strip()
+    for target in settings.TARGET_LANGUAGES:
+        translated = text.translate(target, message)
+        client.publish(translated, target, user)
+
+    client.publish(message, settings.SOURCE_LANGUAGE, user)
+
+    return _templates.TemplateResponse(
+        "streams/message_published.html.j2",
+        {"request": request},
+        status_code=303,
+        headers={"Content-Type": "text/vnd.turbo-stream.html; charset=utf-8"},
     )

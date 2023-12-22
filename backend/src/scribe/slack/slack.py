@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 import slack_sdk
@@ -89,3 +90,7 @@ class SlackClient:
                 break
 
         return channel_list
+
+    def publish(self, text: str, target: str, user: User) -> None:
+        # self.client.chat_postMessage()
+        logging.debug(f"message posted: {target} - {user.real_name}")
