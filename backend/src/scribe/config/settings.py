@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     DEVELOPMENT_MODE: bool = False
     DEV_SESSION_ID: str = "867-5309"
     DEEPL_API_KEY: str = "your-deepl-api-key"
+    PSEUDO_TRANSLATE: bool = False
     SLACK_AUTH_URL: str = "https://slack.com/openid/connect/authorize"
     SLACK_TOKEN_URL: str = "https://slack.com/api/openid.connect.token"
     SLACK_CLIENT_ID: str = "your_client_id"

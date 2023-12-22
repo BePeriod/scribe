@@ -1,3 +1,4 @@
+import re
 from typing import Callable
 
 import deepl
@@ -23,6 +24,9 @@ def transcribe(file_path: str) -> str:
 
 
 def translate(text: str, target_language: str) -> str:
+    if settings.PSEUDO_TRANSLATE:
+        return _pseudo_translation(text)
+
     source_code = settings.SOURCE_LANGUAGE.upper()
     if target_language == "en":
         target_code = "EN-US"
@@ -34,3 +38,17 @@ def translate(text: str, target_language: str) -> str:
     return _translator.translate_text(
         text, target_lang=target_code, source_lang=source_code, tag_handling="html"
     ).text
+
+
+def _pseudo_translation(text: str) -> str:
+    # This regex is split into two capture groups to handle xml tags differently.
+    # <[^>]+> captures xml tags into the tag group
+    # [^<]+ captures everything else into the text group
+    return re.sub(r"(?P<tag><[^>]+>)|(?P<text>[^<]+)", _pseudo_replace, text)
+
+
+def _pseudo_replace(m):
+    g = m.group("text")
+    if g is None:
+        return m.group()
+    return g.upper()

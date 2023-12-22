@@ -104,14 +104,18 @@ class SlackClient:
                 f"{formatted}"
             )
 
-        self.client.chat_postMessage(
-            channel=channel, text=formatted, as_user=True, pin_to_channel=pin_to_channel
+        response = self.client.chat_postMessage(
+            channel=channel, text=formatted, as_user=True
         )
+
+        if response["ok"] and pin_to_channel:
+            self.client.pins_add(channel=channel, timestamp=response["ts"])
 
 
 def format_message(html: str) -> str:
     html = html.replace("<p>", "\n\n")
     html = html.replace("</p>", "\n\n")
+    html = html.replace("@channel", "<!channel>")
     html = html.replace("\n\n\n\n", "\n\n")
     html = html.replace("<strong>", "*")
     html = html.replace("</strong>", "*")
