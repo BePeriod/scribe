@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     PSEUDO_TRANSLATE: bool = False
     SLACK_AUTH_URL: str = "https://slack.com/openid/connect/authorize"
     SLACK_TOKEN_URL: str = "https://slack.com/api/openid.connect.token"
+    SLACK_TEAM_NAME: str = "your-team-id"
     SLACK_CLIENT_ID: str = "your_client_id"
     SLACK_CLIENT_SECRET: str = "your_client_secret"
     SLACK_SIGNING_SECRET: str = "your_signing_secret"

@@ -51,6 +51,7 @@ async def login(request: Request, session: Annotated[Session, Depends(get_sessio
         f"&state={ state }"
         f"&nonce={ nonce }"
         f"&redirect_uri={slack.redirect_uri}"
+        f"&team={settings.SLACK_TEAM_NAME}"
         f"&client_id={settings.SLACK_CLIENT_ID}"
     )
 
