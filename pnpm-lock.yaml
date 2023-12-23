@@ -11,9 +11,6 @@ dependencies:
   '@hotwired/turbo':
     specifier: 8.0.0-beta.2
     version: 8.0.0-beta.2
-  tinymce:
-    specifier: ^6.8.2
-    version: 6.8.2
 
 devDependencies:
   '@rollup/plugin-node-resolve':
@@ -79,6 +76,9 @@ devDependencies:
   tailwindcss:
     specifier: ^3.3.6
     version: 3.3.6
+  tinymce:
+    specifier: ^6.8.2
+    version: 6.8.2
   tslib:
     specifier: ^2.6.2
     version: 2.6.2
@@ -5313,7 +5313,7 @@ packages:
 
   /tinymce@6.8.2:
     resolution: {integrity: sha512-Lho79o2Y1Yn+XdlTEkHTEkEmzwYWTXz7IUsvPwxJF3VTtgHUIAAuBab29kik+f2KED3rZvQavr9D7sHVMJ9x4A==}
-    dev: false
+    dev: true
 
   /titleize@3.0.0:
     resolution: {integrity: sha512-KxVu8EYHDPBdUYdKZdKtU2aj2XfEx9AfjXxE/Aj0vT06w2icA09Vus1rh6eSu1y01akYg6BjIK/hxyLJINoMLQ==}
