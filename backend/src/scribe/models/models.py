@@ -1,3 +1,7 @@
+"""
+This module contains all the Pydantic models for the app.
+"""
+
 import inspect
 from typing import Annotated, Optional
 
@@ -5,41 +9,47 @@ from fastapi import Form
 from pydantic import BaseModel
 
 
-# since Hotwire deals mostly with form data instead of json,
-# we will add this decorator function to convert Pydantic models
-# taken from:
-# https://stackoverflow.com/questions/60127234/how-to-use-a-pydantic-model-with-form-data-in-fastapi/77113651#77113651
-# the accepted answer no longer works with FastAPI 0.103.1
-def as_form(cls):
-    new_params = [
-        inspect.Parameter(
-            field_name,
-            inspect.Parameter.POSITIONAL_ONLY,
-            default=model_field.default,
-            annotation=Annotated[model_field.annotation, *model_field.metadata, Form()],
-        )
-        for field_name, model_field in cls.model_fields.items()
-    ]
-
-    cls.__signature__ = cls.__signature__.replace(parameters=new_params)
-
-    return cls
-
-
-@as_form
-class ToDo(BaseModel):
-    id: Optional[int] = None
-    text: str
-    is_done: Optional[bool] = False
-
-
 class Team(BaseModel):
+    """
+    The Team class represents a Slack team.
+
+    Attributes
+    ----------
+        id : str
+            The id of the team
+        name : str
+            The name of the team
+        image : str
+            The url of the team image
+    """
+
     id: str
     name: str
     image: Optional[str] = None
 
 
 class User(BaseModel):
+    """
+    The User class represents a Slack user
+
+    Attributes
+    ----------
+        id : str
+            The id of the user
+        real_name : str
+            The name of the user
+        real_name_normalized : str
+            The name of the user with accents removed
+        first_name : str
+            The user's given name
+        last_name : str
+            The user's surname
+        display_name : str
+            The user's display name
+        image : str
+            The url of the user's avatar
+    """
+
     id: str
     real_name: str
     real_name_normalized: str
@@ -50,11 +60,35 @@ class User(BaseModel):
 
 
 class Channel(BaseModel):
+    """
+    The Channel class represents a Slack channel
+
+    Attributes
+    ----------
+        id : str
+            The id of the channel
+        name : str
+            The name of the channel
+    """
+
     id: str
     name: str
 
 
 class Recording(BaseModel):
+    """
+    The Recording class represents an audio recording
+
+    Attributes
+    ----------
+        id : str
+            The id of the recording
+        file_path : str
+            The file location
+        transcription : str
+            The text transcription of the audio
+    """
+
     id: str
     file_path: str
     transcription: Optional[str] = None

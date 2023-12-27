@@ -1,20 +1,25 @@
-# HotAPI - FastAPI, Hotwired
+# Scribe
 
-This repository is a skeleton project for integrating [FastAPI](https://fastapi.tiangolo.com/)
-with [Hotwire](https://hotwired.dev/).
-It is the accompaniment to a tutorial article located [here](https://www.turtlestack.dev/articles/hotwiring-fast-api).
+## A Slack app for transcription and translation
 
-Please refer to the article for an in-depth explanation of the project.
+Scribe is a simple browser app that takes a microphone recording,
+translates it into many languages, and posts to different language channels on Slack.
 
 ## Project Structure
 
 ### Backend
 
+The serverside of this project is written in Python using FastAPI.
 The backend folder is where all the Python code is stored.
-The `hotapi`
-package contained therein has a `main.py` file to serve FastAPI.
-The `routers` package contains a single `pages.py` module to serve HTML endpoints.
+The project entrypoint is `src/scribe/main.py`.
+The file `dependencies.py` contains FastAPI rout dependency functions.
+The file `exceptions.py` contains custom error types.
+
+The `config` package contains the environment variables and logging settings.
 The `models` folder contains the Pydantic models.
+The `routers` package contains a single `pages.py` module to serve HTML endpoints.
+The `session` package contains simple in memory session management.
+The `slack` package contains a client configured to make Slack API calls.
 
 ### Frontend
 
@@ -25,7 +30,7 @@ reside.
 
 ### Templates
 
-All views are implemented as Jinja2 templates. These reside in the templates folder.
+All views are implemented as Jinja2 templates. These reside in the `templates` folder.
 Within that are four additional folders.
 
 - `layout`: This is where the structural markup lives.
@@ -37,6 +42,8 @@ Within that are four additional folders.
 
 The static folder is where all publicly served assets will go.
 This is also where the frontend code gets built.
+The `vendor` folder in here includes the `TinyMCE` text editor.
+This is planned to be removed from the repo and pulled in through Rollup instead.
 
 ## Tooling
 

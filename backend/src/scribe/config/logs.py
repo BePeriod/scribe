@@ -1,3 +1,6 @@
+"""
+This module configures logging to format uvicorn messages into stdout.
+"""
 import logging.config
 
 from scribe.config.settings import settings
@@ -31,4 +34,8 @@ logging_config = {
 
 
 def init():
+    """
+    Initialize logging
+    :return: None
+    """
     logging.config.dictConfig(logging_config)

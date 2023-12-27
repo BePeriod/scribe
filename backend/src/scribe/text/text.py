@@ -1,3 +1,6 @@
+"""
+This module provides functionality for manipulating text.
+"""
 import re
 from typing import Callable
 
@@ -14,16 +17,24 @@ _listeners = []
 _translator = deepl.Translator(settings.DEEPL_API_KEY)
 
 
-def subscribe(callback: Callable[[Recording], None]):
-    _listeners.append(callback)
-
-
 def transcribe(file_path: str) -> str:
+    """
+    Transcribe an audio file
+
+    :param file_path: the path to the audio file
+    :return: the transcribed text
+    """
     result = model.transcribe(file_path)
     return result["text"]
 
 
 def translate(text: str, target_language: str) -> str:
+    """
+    Translate text into a target language
+    :param text: the text to translate
+    :param target_language: the language code to translate into
+    :return: the translated text
+    """
     if settings.PSEUDO_TRANSLATE:
         return _pseudo_translation(text)
 
@@ -41,6 +52,12 @@ def translate(text: str, target_language: str) -> str:
 
 
 def _pseudo_translation(text: str) -> str:
+    """
+    Perform a fake translation. Used for development to reduce DeepL API calls.
+
+    :param text: the text to translate
+    :return: altered text
+    """
     # This regex is split into two capture groups to handle xml tags differently.
     # <[^>]+> captures xml tags into the tag group
     # [^<]+ captures everything else into the text group
@@ -48,6 +65,11 @@ def _pseudo_translation(text: str) -> str:
 
 
 def _pseudo_replace(m):
+    """
+    Uppercase regex matched text groups
+    :param m: regex matched text
+    :return: uppercase text or original group if not text
+    """
     g = m.group("text")
     if g is None:
         return m.group()

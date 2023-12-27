@@ -1,3 +1,7 @@
+"""
+This module contains FastAPI dependency functions.
+"""
+
 import logging
 from typing import Annotated
 
@@ -13,6 +17,11 @@ session_store = SessionStore()
 
 
 def get_session(request: Request) -> Session:
+    """
+    Retrieve the active Session
+    :param request: The HTTP request
+    :return: Session object
+    """
     session = None
     try:
         session = request.state.session
@@ -33,6 +42,11 @@ def get_session(request: Request) -> Session:
 
 
 def session_user(session: Annotated[Session, Depends(get_session)]) -> User:
+    """
+    Retrieve the active User or throw an authentication exception
+    :param session: The active session
+    :return: a User object
+    """
     user = session.get("user")
     if user is None:
         raise NotAuthenticatedException("Not authenticated")
@@ -41,6 +55,12 @@ def session_user(session: Annotated[Session, Depends(get_session)]) -> User:
 
 
 def slack_client(session: Annotated[Session, Depends(get_session)]) -> SlackClient:
+    """
+    Create a Slack client based on the session access_token
+    or throws authentication exception.
+    :param session:
+    :return: SlackClient object
+    """
     token = session.get("access_token")
     if token is None:
         raise NotAuthenticatedException("Not authenticated")
