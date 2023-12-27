@@ -45,7 +45,7 @@ class Settings(BaseSettings):
         Slack JWT signing token
     SLACK_USER_TOKEN: str
         Slack app user token
-    USER_SCOPES: List[str]
+    SLACK_USER_SCOPES: List[str]
         User scopes to request from Slack
     UPLOAD_PATH: str
         folder path for file uploads
@@ -73,7 +73,14 @@ class Settings(BaseSettings):
     SLACK_CLIENT_SECRET: str = "your_client_secret"
     SLACK_SIGNING_SECRET: str = "your_signing_secret"
     SLACK_USER_TOKEN: str = "your_user_token"
-    USER_SCOPES: List[str] = ["openid"]
+    SLACK_USER_SCOPES: List[str] = [
+        "channels:read",
+        "chat:write",
+        "identify",
+        "pins:write",
+        "team:read",
+        "users.profile:read",
+    ]
     UPLOAD_PATH: str = "/tmp/scribe"
     SOURCE_LANGUAGE: str = "en"
     TARGET_LANGUAGES: list[str] = ["es", "fr", "it", "ru", "pt"]

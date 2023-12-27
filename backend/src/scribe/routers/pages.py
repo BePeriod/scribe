@@ -61,8 +61,10 @@ async def login(request: Request, session: Annotated[Session, Depends(get_sessio
     session.set("state", state)
     nonce = secrets.token_urlsafe(16)
     session.set("nonce", nonce)
+
     auth_link = (
-        f"{settings.SLACK_AUTH_URL}?scope={'%20'.join(settings.USER_SCOPES)}"
+        "https://slack.com/oauth/v2/authorize?scope="
+        f"&user_scope={ ','.join(settings.SLACK_USER_SCOPES) }"
         f"&response_type=code"
         f"&state={ state }"
         f"&nonce={ nonce }"
@@ -72,7 +74,8 @@ async def login(request: Request, session: Annotated[Session, Depends(get_sessio
     )
 
     return _templates.TemplateResponse(
-        "pages/login.html.j2", {"request": request, "auth_link": auth_link}
+        "pages/login.html.j2",
+        {"request": request, "auth_link": auth_link},
     )
 
 
