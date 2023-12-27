@@ -2,13 +2,11 @@
 This module provides functionality for manipulating text.
 """
 import re
-from typing import Callable
 
 import deepl
 import whisper
 
 from scribe.config.settings import settings
-from scribe.models.models import Recording
 
 model = whisper.load_model("base")
 

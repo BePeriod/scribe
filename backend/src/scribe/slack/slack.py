@@ -1,7 +1,6 @@
 """
 This module manages API calls to Slack
 """
-import logging
 from typing import List
 
 import slack_sdk

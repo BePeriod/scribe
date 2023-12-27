@@ -2,10 +2,8 @@
 This module contains all the Pydantic models for the app.
 """
 
-import inspect
-from typing import Annotated, Optional
+from typing import Optional
 
-from fastapi import Form
 from pydantic import BaseModel
 
 
