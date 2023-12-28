@@ -33,8 +33,6 @@ class Settings(BaseSettings):
         Flag to use mock translations instead of DeepL.
     SLACK_AUTH_URL: str
         The Slack authorization URL.
-    SLACK_TOKEN_URL: str
-        The URL to retrieve a Slack token.
     SLACK_TEAM_ID: str
         The Slack workspace ID.
     SLACK_CLIENT_ID: str
@@ -66,8 +64,7 @@ class Settings(BaseSettings):
     DEV_SESSION_ID: str = "867-5309"
     DEEPL_API_KEY: str = "your-deepl-api-key"
     PSEUDO_TRANSLATE: bool = False
-    SLACK_AUTH_URL: str = "https://slack.com/openid/connect/authorize"
-    SLACK_TOKEN_URL: str = "https://slack.com/api/openid.connect.token"
+    SLACK_AUTH_URL: str = "https://slack.com/oauth/v2/authorize?scope="
     SLACK_TEAM_ID: str = "your-team-id"
     SLACK_CLIENT_ID: str = "your_client_id"
     SLACK_CLIENT_SECRET: str = "your_client_secret"

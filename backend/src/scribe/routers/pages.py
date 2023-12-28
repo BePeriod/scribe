@@ -21,7 +21,7 @@ from scribe.dependencies import get_session, session_user, slack_client
 from scribe.models.models import Recording, User
 from scribe.session.session import Session
 from scribe.slack import slack
-from scribe.slack.slack import SlackClient
+from scribe.slack.slack import SlackClient, SlackError
 from scribe.text import text
 
 # initialize the frontend router
@@ -63,7 +63,7 @@ async def login(request: Request, session: Annotated[Session, Depends(get_sessio
     session.set("nonce", nonce)
 
     auth_link = (
-        "https://slack.com/oauth/v2/authorize?scope="
+        f"{settings.SLACK_AUTH_URL}?scope="
         f"&user_scope={ ','.join(settings.SLACK_USER_SCOPES) }"
         f"&response_type=code"
         f"&state={ state }"
@@ -110,9 +110,9 @@ async def read_code(
         session.set("channels", client.channels())
 
         return RedirectResponse("/")
-    except ValueError as err:
+    except SlackError as err:
         logging.warning(f"Invalid token: {err}")
-        raise HTTPException(status_code=400, detail="Invalid token")
+        raise HTTPException(status_code=401, detail="Invalid token")
     except Exception as err:
         logging.debug(f"uncaught exception: {err}")
         raise err

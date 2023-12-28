@@ -5,6 +5,7 @@ from typing import List
 
 import slack_sdk
 from slack_bolt import App
+from slack_sdk.errors import SlackApiError
 
 from scribe.config.settings import settings
 from scribe.models.models import Channel, Team, User
@@ -14,6 +15,14 @@ __slack = App(
 )
 
 redirect_uri = f"{ settings.SITE_URL }/auth/redirect"
+
+
+class SlackError(Exception):
+    """
+    Class used to indicate an error occurred in Slack API call.
+    """
+
+    pass
 
 
 def access_token(code: str) -> str:
@@ -31,15 +40,10 @@ def access_token(code: str) -> str:
         code=code,
     )
 
+    if not slack_token.get("ok", False):
+        raise SlackError(slack_token.get("error"))
+
     return slack_token["access_token"]
-
-
-class SlackError(Exception):
-    """
-    Class used to indicate an error occurred in Slack API call.
-    """
-
-    pass
 
 
 class SlackClient:
@@ -62,29 +66,34 @@ class SlackClient:
 
         :return: User
         """
-        info = self.client.openid_connect_userInfo()
-        if not info.get("ok", False):
-            raise SlackError(info.get("error"))
 
-        user_id = info.get("sub")
+        try:
+            info = self.client.openid_connect_userInfo()
+            if not info.get("ok", False):
+                raise SlackError(info.get("error"))
 
-        profile_res = self.client.users_profile_get()
-        if not profile_res.get("ok", False):
-            raise SlackError(profile_res.get("error"))
+            user_id = info.get("sub")
 
-        profile = profile_res.get("profile", {})
-        return User(
-            id=user_id,
-            real_name=profile.get("real_name", ""),
-            real_name_normalized=profile.get("real_name_normalized", ""),
-            first_name=profile.get("first_name", ""),
-            last_name=profile.get("last_name", ""),
-            display_name=profile.get(
-                "display_name",
-                profile.get("first_name", ""),
-            ),
-            image=profile.get("image_48", ""),
-        )
+            profile_res = self.client.users_profile_get()
+            if not profile_res.get("ok", False):
+                raise SlackError(profile_res.get("error"))
+
+            profile = profile_res.get("profile", {})
+            return User(
+                id=user_id,
+                real_name=profile.get("real_name", ""),
+                real_name_normalized=profile.get("real_name_normalized", ""),
+                first_name=profile.get("first_name", ""),
+                last_name=profile.get("last_name", ""),
+                display_name=profile.get(
+                    "display_name",
+                    profile.get("first_name", ""),
+                ),
+                image=profile.get("image_48", ""),
+            )
+
+        except SlackApiError:
+            raise SlackError("invalid token")
 
     def team(self) -> Team:
         """
