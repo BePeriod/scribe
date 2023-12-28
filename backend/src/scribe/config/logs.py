@@ -10,7 +10,7 @@ ISO_8601 = "%Y-%m-%dT%H:%M:%S%z"
 logging_config = {
     "version": 1,  # mandatory field
     # if you want to overwrite existing loggers' configs
-    "disable_existing_loggers": False,
+    "disable_existing_loggers": True,
     "formatters": {
         "basic": {
             "()": "uvicorn.logging.DefaultFormatter",

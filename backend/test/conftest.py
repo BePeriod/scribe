@@ -2,6 +2,8 @@ import secrets
 
 import pytest
 from fastapi.testclient import TestClient
+from starlette.datastructures import Headers
+from starlette.requests import Request
 
 import scribe.dependencies
 import scribe.slack.slack
@@ -11,9 +13,12 @@ from scribe.session.session import SessionStore
 
 from . import mocks
 
+_session_store = SessionStore()
+
 
 @pytest.fixture(autouse=True)
 def global_mocks(mocker):
+    mocker.patch.object(scribe.dependencies, "session_store", _session_store)
     mocker.patch.object(scribe.slack.slack, "access_token", mocks.mock_access_token)
     mocker.patch.object(scribe.slack.slack, "SlackClient", mocks.MockSlackClient)
 
@@ -61,10 +66,8 @@ def oauth_code(access_token):
 
 
 @pytest.fixture()
-def session_store(mocker):
-    session_store = SessionStore()
-    mocker.patch.object(scribe.dependencies, "session_store", session_store)
-    return session_store
+def session_store():
+    return _session_store
 
 
 @pytest.fixture()
@@ -79,3 +82,16 @@ def user_session(empty_session, user):
     empty_session.set("user", user)
 
     return empty_session
+
+
+@pytest.fixture()
+def empty_http_request():
+    scope = {"type": "http", "headers": Headers()}
+    return Request(scope=scope)
+
+
+@pytest.fixture()
+def user_session_http_request(user_session):
+    scope = {"type": "http", "headers": Headers(), "state": {"session": user_session}}
+    request = Request(scope=scope)
+    return request
