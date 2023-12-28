@@ -1,6 +1,7 @@
 """
 This module provides functionality for manipulating text.
 """
+import os
 import re
 
 import deepl
@@ -22,8 +23,12 @@ def transcribe(file_path: str) -> str:
     :param file_path: the path to the audio file
     :return: the transcribed text
     """
+
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"File {file_path} does not exist")
+
     result = model.transcribe(file_path)
-    return result["text"]
+    return result["text"].strip()
 
 
 def translate(text: str, target_language: str) -> str:

@@ -1,0 +1,1 @@
+This file is used to test an exception is raised when transcribing a non-audio file.
