@@ -38,7 +38,7 @@ async def home(request: Request, user: Annotated[str, Depends(session_user)]):
     Renders the home page
 
     :param request: The request object
-    :param user: The logged in user
+    :param user: The logged-in user
     :return: HTML Response
     """
 
@@ -157,7 +157,7 @@ async def upload(
     upload an audio file
     :param audio_file: mpeg, ogg, wan, or flac audio file
     :param request: the HTTP request
-    :param _user: logged in user, used to check user session exists
+    :param _user: logged-in user, used to check user session exists
     :param session: the active Session object
     :return: HTML Response
     """

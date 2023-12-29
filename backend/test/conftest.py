@@ -16,6 +16,37 @@ from . import mocks
 _session_store = SessionStore()
 
 
+def pytest_addoption(parser):
+    parser.addoption(
+        "--run-integration",
+        action="store_true",
+        default=False,
+        help="run integration tests",
+    )
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "integration: mark test as integration test")
+
+
+def pytest_collection_modifyitems(config, items):
+    """
+    Integration tests needing 3rd party credentials will not be run by default.
+    Passing the --run-integration flag will run them.
+
+    :param config:
+    :param items:
+    :return: None
+    """
+    if config.getoption("--run-integration"):
+        # --run-integration given in cli: do not skip integration tests
+        return
+    skip_integration = pytest.mark.skip(reason="need --run-integration option to run")
+    for item in items:
+        if "integration" in item.keywords:
+            item.add_marker(skip_integration)
+
+
 @pytest.fixture(autouse=True)
 def global_mocks(mocker):
     mocker.patch.object(scribe.dependencies, "session_store", _session_store)
