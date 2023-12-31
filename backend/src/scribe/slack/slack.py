@@ -168,8 +168,18 @@ class SlackClient:
                     channels=channel,
                 )
                 if response["ok"] and pin_to_channel:
-                    ts = response["file"]["shares"]["public"][channel][0]["ts"]
-                    self.client.pins_add(channel=channel, timestamp=ts)
+                    ts = None
+                    try:
+                        ts = response["file"]["shares"]["public"][channel][0]["ts"]
+                    except KeyError:
+                        try:
+                            ts = response["file"]["shares"]["private"][channel][0]["ts"]
+                        except KeyError:
+                            logging.warning(
+                                "could not find timestamp for channel %s", channel
+                            )
+                    if ts:
+                        self.client.pins_add(channel=channel, timestamp=ts)
                 else:
                     logging.warning(f"failed to post message: {response['error']}")
         else:
@@ -211,6 +221,7 @@ def format_message(html: str, target: str, notify: bool) -> str:
     html = html.replace("<em>", "_")
     html = html.replace("</em>", "_")
     html = re.sub("<img[^>]+>", "", html)
+    html = html.strip()
 
     if notify:
         greeting = settings.LANGUAGE_GREETINGS[target]
