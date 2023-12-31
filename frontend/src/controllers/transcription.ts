@@ -11,6 +11,7 @@ export default class extends Controller {
   static targets = ['messageInput', 'formattedMessage', 'imageInput', 'loadingIcon']
 
   async connect() {
+    tinymce.activeEditor?.remove()
     const editorId = `#${this.messageInputTarget.id}`
     await tinymce.init({
       selector: editorId,
