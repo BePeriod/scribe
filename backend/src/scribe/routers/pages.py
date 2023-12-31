@@ -6,7 +6,7 @@ import logging
 import os
 import secrets
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Optional
 from uuid import uuid4
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Request, UploadFile
@@ -62,6 +62,16 @@ async def login(request: Request, session: Annotated[Session, Depends(get_sessio
     nonce = secrets.token_urlsafe(16)
     session.set("nonce", nonce)
 
+    openid_link = (
+        f"{settings.SLACK_OPENID_URL}?scope=openid"
+        f"&response_type=code"
+        f"&state={ state }"
+        f"&nonce={ nonce }"
+        f"&redirect_uri={slack.redirect_uri}"
+        f"&team={settings.SLACK_TEAM_ID}"
+        f"&client_id={settings.SLACK_CLIENT_ID}"
+    )
+
     auth_link = (
         f"{settings.SLACK_AUTH_URL}?scope="
         f"&user_scope={ ','.join(settings.SLACK_USER_SCOPES) }"
@@ -75,7 +85,7 @@ async def login(request: Request, session: Annotated[Session, Depends(get_sessio
 
     return _templates.TemplateResponse(
         "pages/login.html.j2",
-        {"request": request, "auth_link": auth_link},
+        {"request": request, "auth_link": auth_link, "openid_link": openid_link},
     )
 
 
@@ -225,27 +235,36 @@ async def transcribe_recording(
 @router.post("/publish")
 async def publish(
     formatted_message: Annotated[str, Form()],
+    post_image: Optional[UploadFile],
     request: Request,
     _user: Annotated[User, Depends(session_user)],
     client: Annotated[SlackClient, Depends(slack_client)],
     pin_to_channel: Annotated[bool, Form()] = False,
+    notify_channel: Annotated[bool, Form()] = False,
 ):
     """
     Translate a message and publish it to each language channel.
 
     :param formatted_message: message formatted as HTML
+    :param post_image: image file to append to post
     :param request: the http request
     :param _user: active session user
     :param client: SlackClient object
     :param pin_to_channel: flag for pinning messages to Slack channels
+    :param notify_channel: Begin post with Dear @channel?
     :return: HTML Response
     """
     message = formatted_message.strip()
-    for target in settings.TARGET_LANGUAGES:
-        translated = text.translate(message, target)
-        client.publish(translated, target, pin_to_channel)
+    messages = {
+        settings.SOURCE_LANGUAGE: message,
+    } | {
+        target: text.translate(message, target) for target in settings.TARGET_LANGUAGES
+    }
 
-    client.publish(message, settings.SOURCE_LANGUAGE, pin_to_channel)
+    if post_image.size == 0:
+        post_image = None
+
+    client.publish(messages, post_image, pin_to_channel, notify_channel)
 
     return _templates.TemplateResponse(
         "streams/message_published.html.j2",

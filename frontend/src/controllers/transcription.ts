@@ -6,8 +6,9 @@ declare let tinymce: TinyMCE
 export default class extends Controller {
   declare readonly messageInputTarget: HTMLInputElement
   declare readonly formattedMessageTarget: HTMLInputElement
+  declare readonly imageInputTarget: HTMLInputElement
   declare readonly loadingIconTarget: HTMLElement
-  static targets = ['messageInput', 'formattedMessage', 'loadingIcon']
+  static targets = ['messageInput', 'formattedMessage', 'imageInput', 'loadingIcon']
 
   async connect() {
     const editorId = `#${this.messageInputTarget.id}`
@@ -25,6 +26,17 @@ export default class extends Controller {
       this.formattedMessageTarget.value = content
       this.formattedMessageTarget.form?.requestSubmit()
       this.loadingIconTarget.classList.remove('hidden')
+    }
+  }
+
+  imagePreview() {
+    if (this.imageInputTarget.files) {
+      const [file] = this.imageInputTarget.files
+      const url = URL.createObjectURL(file)
+      const content = `${
+        tinymce.activeEditor?.getContent() ?? ''
+      }<p><img src="${url}" alt="image preview" width="100%" />`
+      tinymce.activeEditor?.setContent(content)
     }
   }
 }

@@ -64,6 +64,7 @@ class Settings(BaseSettings):
     DEV_SESSION_ID: str = "867-5309"
     DEEPL_API_KEY: str = "your-deepl-api-key"
     PSEUDO_TRANSLATE: bool = False
+    SLACK_OPENID_URL: str = "https://slack.com/openid/connect/authorize"
     SLACK_AUTH_URL: str = "https://slack.com/oauth/v2/authorize?scope="
     SLACK_TEAM_ID: str = "your-team-id"
     SLACK_CLIENT_ID: str = "your_client_id"
@@ -81,6 +82,14 @@ class Settings(BaseSettings):
     UPLOAD_PATH: str = "/tmp/scribe"
     SOURCE_LANGUAGE: str = "en"
     TARGET_LANGUAGES: list[str] = ["es", "fr", "it", "ru", "pt"]
+    LANGUAGE_GREETINGS: dict[str, str] = {
+        "en": "Dear",
+        "es": "Estimado",
+        "fr": "Cher",
+        "it": "Caro",
+        "ru": "Дорогой",
+        "pt": "Caro",
+    }
     SLACK_CHANNEL_LANGUAGE_MAP: dict[str, str] = {}
 
     class Config:

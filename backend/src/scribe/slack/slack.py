@@ -1,9 +1,12 @@
 """
 This module manages API calls to Slack
 """
-from typing import List
+import logging
+import re
+from typing import Dict, List, Optional, Tuple
 
 import slack_sdk
+from fastapi import UploadFile
 from slack_bolt import App
 from slack_sdk.errors import SlackApiError
 
@@ -137,50 +140,83 @@ class SlackClient:
 
         return channel_list
 
-    def publish(self, html: str, target: str, pin_to_channel: bool) -> None:
+    def publish(
+        self,
+        messages: dict[str, str],
+        post_image: Optional[UploadFile],
+        pin_to_channel: bool,
+        notify_channel: bool,
+    ) -> None:
         """
         Publishes a message to a Slack channel based on target language
 
-        :param html: The raw message to publish
-        :param target: The target code
+        :param messages: map of target language and messages
+        :param post_image: An image file to append to the post
+               validation is expected before
         :param pin_to_channel: Flag for pinning the message
+        :param notify_channel:Flag for Dear @channel
 
         :return: None
         """
-        formatted = format_message(html)
+        channel_messages = _prepare_messages(messages, notify_channel)
+        if post_image:
+            file_data = post_image.file.read()
+            for channel, formatted_message in channel_messages:
+                response = self.client.files_upload(
+                    content=file_data,
+                    initial_comment=formatted_message,
+                    channels=channel,
+                )
+                if response["ok"] and pin_to_channel:
+                    ts = response["file"]["shares"]["public"][channel][0]["ts"]
+                    self.client.pins_add(channel=channel, timestamp=ts)
+                else:
+                    logging.warning(f"failed to post message: {response['error']}")
+        else:
+            for channel, formatted_message in channel_messages:
+                response = self.client.chat_postMessage(
+                    channel=channel, as_user=True, text=formatted_message
+                )
+                if response["ok"] and pin_to_channel:
+                    ts = response["ts"]
+                    self.client.pins_add(channel=channel, timestamp=ts)
+                else:
+                    logging.warning(f"failed to post message: {response['error']}")
+
+
+def _prepare_messages(messages: Dict[str, str], notify: bool) -> List[Tuple[str, str]]:
+    res = []
+    for target, message in messages.items():
         channel = settings.SLACK_CHANNEL_LANGUAGE_MAP.get(target, None)
         if not channel:
             raise SlackError(f"Channel not found for language: {target}")
-
-        if settings.DEVELOPMENT_MODE:
-            formatted = (
-                f"TEST MESSAGE FOR: {target}"
-                f"\n---------------------------------\n"
-                f"{formatted}"
-            )
-
-        response = self.client.chat_postMessage(
-            channel=channel, text=formatted, as_user=True
-        )
-
-        if response["ok"] and pin_to_channel:
-            self.client.pins_add(channel=channel, timestamp=response["ts"])
+        res.append((channel, format_message(message, target, notify)))
+    return res
 
 
-def format_message(html: str) -> str:
+def format_message(html: str, target: str, notify: bool) -> str:
     """
     Formats an HTML message into Slack markup.
 
     :param html: raw HTML message to format
+    :param target: target language code
+    :param notify:  flog for notifying the channel
     :return: markdown formatted message
     """
     html = html.replace("<p>", "\n\n")
     html = html.replace("</p>", "\n\n")
-    html = html.replace("@channel", "<!channel>")
     html = html.replace("\n\n\n\n", "\n\n")
     html = html.replace("<strong>", "*")
     html = html.replace("</strong>", "*")
     html = html.replace("<em>", "_")
     html = html.replace("</em>", "_")
+    html = re.sub("<img[^>]+>", "", html)
 
-    return html.strip()
+    if notify:
+        greeting = settings.LANGUAGE_GREETINGS[target]
+        if not greeting:
+            greeting = "Dear"
+
+        html = f"{greeting} <!channel>,\n{html}"
+
+    return html
