@@ -169,6 +169,17 @@ async def read_code(
         return RedirectResponse("/")
     except SlackError as err:
         logging.warning(f"Invalid token: {err}")
+        session.append(
+            "notifications",
+            [
+                Notification(
+                    type="error",
+                    title="Login error",
+                    message="An error occurred logging in. Please try again.",
+                )
+            ],
+        )
+        return RedirectResponse("/login")
     except Exception as err:
         logging.debug(f"uncaught exception: {err}")
 

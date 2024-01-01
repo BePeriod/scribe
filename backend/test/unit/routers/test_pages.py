@@ -18,10 +18,12 @@ def test_bad_oauth_state(api_client, empty_session):
     api_client.cookies.set("scribe_session_id", empty_session.id)
     response = api_client.get("/")
     assert response.url.path == "/login"
-    assert empty_session.get("state") is not None
+    state = empty_session.get("state")
+    assert state is not None
     response = api_client.get("/auth/redirect?code=12345&state=ABCDE")
-    assert response.status_code == 400
-    assert empty_session.get("state") is None
+    assert response.url.path == "/login"
+    assert "Login error" in response.text
+    assert state != empty_session.get("state")
 
 
 def test_bad_oauth_code(api_client, empty_session):
@@ -30,7 +32,8 @@ def test_bad_oauth_code(api_client, empty_session):
     api_client.get("/login")
     state = empty_session.get("state")
     response = api_client.get(f"/auth/redirect?code={bad_code}&state={state}")
-    assert response.status_code == 401
+    assert response.url.path == "/login"
+    assert "Login error" in response.text
 
 
 def test_login_flow(api_client, empty_session, oauth_code):
