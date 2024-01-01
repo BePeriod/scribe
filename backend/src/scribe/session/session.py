@@ -36,6 +36,24 @@ class Session:
         """
         setattr(self._state, key, value)
 
+    def append(self, key: str, value):
+        """
+        Append a value on the session property.
+        If the property does not exist, it will be created.
+        :param key: the property key
+        :param value: the value to set
+        :return: None
+        """
+        current = self.get(key, [])
+        if not isinstance(current, list):
+            raise ValueError("existing value is not list")
+
+        value = [value] if isinstance(value, str) else value
+        if not isinstance(value, list):
+            raise ValueError("value is not list or string")
+
+        self.set(key, current + value)
+
     def delete(self, key: str):
         """
         Delete a value from the session state
@@ -46,6 +64,17 @@ class Session:
             delattr(self._state, key)
         except KeyError:
             pass
+
+    def consume(self, key: str, default=None):
+        """
+        Get a session property then delete it.
+        :param key:
+        :param default:
+        :return: Any
+        """
+        value = self.get(key, default)
+        self.delete(key)
+        return value
 
 
 class SessionStore:

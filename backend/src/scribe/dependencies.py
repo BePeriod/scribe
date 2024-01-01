@@ -3,13 +3,13 @@ This module contains FastAPI dependency functions.
 """
 
 import logging
-from typing import Annotated
+from typing import Annotated, List
 
 from fastapi import Depends
 from starlette.requests import Request
 
 from scribe.exceptions import NotAuthenticatedException
-from scribe.models.models import User
+from scribe.models.models import Notification, User
 from scribe.session.session import Session, SessionStore
 from scribe.slack.slack import SlackClient
 
@@ -67,3 +67,9 @@ def slack_client(session: Annotated[Session, Depends(get_session)]) -> SlackClie
 
     client = SlackClient(token)
     return client
+
+
+def consume_notifications(
+    session: Annotated[Session, Depends(get_session)]
+) -> List[Notification]:
+    return session.consume("notifications")

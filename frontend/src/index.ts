@@ -6,6 +6,7 @@ import { Application } from '@hotwired/stimulus'
 import RecorderController from './controllers/recorder'
 import RecordingController from './controllers/recording'
 import TranscriptionController from './controllers/transcription'
+import NotificationController from './controllers/notification'
 
 // update the global window type. This is needed for the window.stimulus line below.
 // otherwise, the transpiler complains
@@ -21,3 +22,4 @@ const Stimulus = window.Stimulus
 Stimulus.register('recorder', RecorderController)
 Stimulus.register('recording', RecordingController)
 Stimulus.register('transcription', TranscriptionController)
+Stimulus.register('notification', NotificationController)

@@ -1,7 +1,7 @@
 """
 This module contains all the Pydantic models for the app.
 """
-
+from enum import Enum
 from typing import Optional
 
 from pydantic import BaseModel
@@ -90,3 +90,16 @@ class Recording(BaseModel):
     id: str
     file_path: str
     transcription: Optional[str] = None
+
+
+class NotificationType(str, Enum):
+    success = "success"
+    error = "error"
+    warning = "warning"
+    info = "info"
+
+
+class Notification(BaseModel):
+    type: NotificationType
+    title: str
+    message: Optional[str]

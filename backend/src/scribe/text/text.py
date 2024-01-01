@@ -1,6 +1,7 @@
 """
 This module provides functionality for manipulating text.
 """
+import logging
 import os
 import re
 
@@ -31,6 +32,14 @@ def transcribe(file_path: str) -> str:
     return result["text"].strip()
 
 
+class TranslationException(Exception):
+    """
+    This exception indicates that an error occurred while translating text
+    """
+
+    pass
+
+
 def translate(text: str, target_language: str) -> str:
     """
     Translate text into a target language
@@ -38,20 +47,24 @@ def translate(text: str, target_language: str) -> str:
     :param target_language: the language code to translate into
     :return: the translated text
     """
-    if settings.PSEUDO_TRANSLATE:
-        return _pseudo_translation(text)
+    try:
+        if settings.PSEUDO_TRANSLATE:
+            return _pseudo_translation(text)
 
-    source_code = settings.SOURCE_LANGUAGE.upper()
-    if target_language == "en":
-        target_code = "EN-US"
-    elif target_language == "pt":
-        target_code = "PT-BR"
-    else:
-        target_code = target_language.upper()
+        source_code = settings.SOURCE_LANGUAGE.upper()
+        if target_language == "en":
+            target_code = "EN-US"
+        elif target_language == "pt":
+            target_code = "PT-BR"
+        else:
+            target_code = target_language.upper()
 
-    return _translator.translate_text(
-        text, target_lang=target_code, source_lang=source_code, tag_handling="html"
-    ).text
+        return _translator.translate_text(
+            text, target_lang=target_code, source_lang=source_code, tag_handling="html"
+        ).text
+    except Exception as err:
+        logging.warning("could not translate text: {}".format(err))
+        raise TranslationException(err)
 
 
 def _pseudo_translation(text: str) -> str:
