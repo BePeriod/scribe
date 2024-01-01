@@ -15,6 +15,15 @@ jobs:
           python-version: '3.11'
           architecture: 'x64'
           cache: 'pip'
+      - name: use pnpm
+        uses: pnpm/action-setup@0609f0983b7a228f052f81ef4c3d6510cae254ad
+        with:
+          version: 8.12.0
+          cache: 'pnpm'
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.15.0'
       - name: Install ffmpeg
         uses: FedericoCarboni/setup-ffmpeg@v2
         id: setup-ffmpeg
@@ -29,7 +38,10 @@ jobs:
         with:
           path: ./.venv
           key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
-      - name: Install dependencies
+      - name: Install frontend dependencies
+        run: |
+          pnpm install
+      - name: Install backend dependencies
         run: |
           python -m poetry install
       - name: Run tests
@@ -45,3 +57,12 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           poetry run flake8 ./backend --count --show-source --statistics
+      - name: check valid TypeSc
+        run: |
+          pnpm tsc --noEmit
+      - name: Run eslint
+        run: |
+          pnpm run lint
+      - name: Check prettier formatting
+        run: |
+          pnpm run format

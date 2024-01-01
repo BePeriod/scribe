@@ -8,6 +8,7 @@
   "type": "module",
   "scripts": {
     "lint": "eslint frontend/src/",
+    "format": "prettier ./frontend --check",
     "watch:ts": "rollup -c --watch",
     "sync": "browser-sync start --proxy 'http://127.0.0.1:8000' --files 'templates' --files 'static'",
     "dev": "concurrently --names \"TS,SYNC\" -c \"bgBlue.bold,bgMagenta.bold\"  \"pnpm run watch:ts\" \"pnpm run sync\"",
