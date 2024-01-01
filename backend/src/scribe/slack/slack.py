@@ -13,11 +13,18 @@ from slack_sdk.errors import SlackApiError
 from scribe.config.settings import settings
 from scribe.models.models import Channel, Team, User
 
-__slack = App(
-    token=settings.SLACK_USER_TOKEN, signing_secret=settings.SLACK_SIGNING_SECRET
-)
-
+__slack = None
 redirect_uri = f"{ settings.SITE_URL }/auth/redirect"
+
+
+def __slack_app() -> App:
+    global __slack
+    if __slack is None:
+        __slack = App(
+            token=settings.SLACK_USER_TOKEN,
+            signing_secret=settings.SLACK_SIGNING_SECRET,
+        )
+    return __slack
 
 
 class SlackError(Exception):
@@ -36,7 +43,8 @@ def access_token(code: str) -> str:
     :param code:
     :return:
     """
-    slack_token = __slack.client.openid_connect_token(
+    slack_app = __slack_app()
+    slack_token = slack_app.client.openid_connect_token(
         client_id=settings.SLACK_CLIENT_ID,
         client_secret=settings.SLACK_CLIENT_SECRET,
         redirect_uri=redirect_uri,
