@@ -10,7 +10,7 @@ export default class extends Controller {
   declare readonly loadingIconTarget: HTMLElement
   static targets = ['messageInput', 'formattedMessage', 'imageInput', 'loadingIcon']
 
-  async connect() {
+  async connect(): Promise<void> {
     tinymce.activeEditor?.remove()
     const editorId = `#${this.messageInputTarget.id}`
     await tinymce.init({
@@ -21,7 +21,7 @@ export default class extends Controller {
     })
   }
 
-  publish() {
+  publish(): void {
     const content = tinymce.activeEditor?.getContent()
     if (content) {
       this.formattedMessageTarget.value = content
@@ -30,7 +30,7 @@ export default class extends Controller {
     }
   }
 
-  imagePreview() {
+  imagePreview(): void {
     if (this.imageInputTarget.files) {
       const [file] = this.imageInputTarget.files
       const url = URL.createObjectURL(file)

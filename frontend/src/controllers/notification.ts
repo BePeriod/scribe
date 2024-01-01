@@ -9,12 +9,12 @@ export default class extends Controller<HTMLElement> {
   readonly leavingFrom = ['opacity-100']
   readonly leavingTo = ['opacity-0']
 
-  connect() {
+  connect(): void {
     this.element.classList.remove(...this.enterFrom)
     this.element.classList.add(...this.enterTo)
   }
 
-  disconnect() {
+  disconnect(): void {
     this.element.classList.remove(...this.entering)
     this.element.classList.add(...this.leaving)
     this.element.classList.remove(...this.leavingFrom)

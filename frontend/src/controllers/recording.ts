@@ -10,7 +10,6 @@ export default class extends Controller {
   }
 
   connect(): void {
-    console.log('recording url', this.urlValue)
     this.es = new EventSource(this.urlValue)
     connectStreamSource(this.es)
   }

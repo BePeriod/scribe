@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus'
+import * as Turbo from '@hotwired/turbo'
 
 export default class extends Controller {
   stream: MediaStream | null = null
@@ -50,10 +51,14 @@ export default class extends Controller {
           this.audioChunks = []
         }
       } catch (error) {
-        console.error('Error accessing media devices:', error)
+        Turbo.visit(
+          "/notify?type=error&title=Error%20accessing%20media%20devices&message=Scribe%20could%20not%access%20you're%20microphone"
+        )
       }
     } else {
-      console.error('Audio recording is not supported')
+      Turbo.visit(
+        "/notify?type=error&title=Audio%recording%is%20not%20supported&message=You're%20browser%20does%20not%20support%20audio%20recording"
+      )
     }
   }
 
@@ -67,7 +72,6 @@ export default class extends Controller {
   }
 
   toggle(): void {
-    console.log('toggle', this.recorder)
     if (this.recorder?.state === 'recording') {
       this.recorder.stop()
     } else {
@@ -89,7 +93,9 @@ export default class extends Controller {
 
         this.audioInputTarget.form?.requestSubmit()
       } catch (error) {
-        console.error('request failed', error)
+        Turbo.visit(
+          "/notify?type=error&title=Upload%20failed&message=You're%20recording%20could%20not%20be%20uploaded"
+        )
       } finally {
         this.showIcon('play')
       }

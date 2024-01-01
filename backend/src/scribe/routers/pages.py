@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Annotated, List, Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, Form, Request, UploadFile
+from fastapi import APIRouter, Depends, Form, Query, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sse_starlette.sse import EventSourceResponse
@@ -22,7 +22,7 @@ from scribe.dependencies import (
     session_user,
     slack_client,
 )
-from scribe.models.models import Notification, Recording, User
+from scribe.models.models import Notification, NotificationType, Recording, User
 from scribe.session.session import Session
 from scribe.slack import slack
 from scribe.slack.slack import SlackClient, SlackError
@@ -453,3 +453,27 @@ async def publish(
             status_code=500,
             headers={"Content-Type": "text/vnd.turbo-stream.html; charset=utf-8"},
         )
+
+
+@router.get("/notify")
+def notify(
+    request: Request,
+    ntype: Annotated[NotificationType, Query(alias="type")],
+    title: str,
+    message: str,
+):
+    return _templates.TemplateResponse(
+        "streams/send_notification.html.j2",
+        {
+            "request": request,
+            "notification": Notification(
+                type=ntype,
+                title=title,
+                message=message,
+            ),
+        },
+        # Turbo needs post data that returns HTML to set a status of 303 redirect.
+        # This is due to how browsers handle page history with form submissions.
+        status_code=200,
+        headers={"Content-Type": "text/vnd.turbo-stream.html; charset=utf-8"},
+    )
