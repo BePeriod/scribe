@@ -10,6 +10,5 @@ export default {
   ],
 
   // Format MarkDown and JSON
-  '**/*.(md|json)': (filenames) =>
-    `pnpm prettier --write ${filenames.join(' ')}`,
+  '**/*.(md|json|css)': (filenames) => `pnpm prettier --write ${filenames.join(' ')}`,
 }
