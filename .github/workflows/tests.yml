@@ -57,7 +57,7 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           poetry run flake8 ./backend --count --show-source --statistics
-      - name: check valid TypeSc
+      - name: check valid TypeScript
         run: |
           pnpm tsc --noEmit
       - name: Run eslint

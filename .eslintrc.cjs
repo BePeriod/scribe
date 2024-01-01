@@ -16,7 +16,6 @@ module.exports = {
     '@vercel/style-guide/eslint/node',
     '@vercel/style-guide/eslint/typescript',
     '@vercel/style-guide/eslint/browser',
-    '@vercel/style-guide/eslint/react',
     'eslint-config-turbo',
   ].map(require.resolve),
   parserOptions: {
@@ -40,6 +39,5 @@ module.exports = {
   // add rules configurations here
   rules: {
     'import/no-default-export': 'off',
-    'no-console': 'warn',
   },
 }
