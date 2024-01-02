@@ -44,9 +44,6 @@ jobs:
       - name: Install backend dependencies
         run: |
           python -m poetry install
-      - name: Run tests
-        run: |
-          python -m poetry run pytest --cov=scribe backend/test  -sxv
       - uses: psf/black@stable
         with:
           options: "--check --diff"
@@ -66,3 +63,9 @@ jobs:
       - name: Check prettier formatting
         run: |
           pnpm run format
+      - name: Run frontend tests
+        run: |
+          pnpm run test
+      - name: Run  backend tests
+        run: |
+          python -m poetry run pytest --cov=scribe backend/test  -sxv
