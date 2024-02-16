@@ -7,6 +7,9 @@ import RecorderController from './controllers/recorder'
 import RecordingController from './controllers/recording'
 import TranscriptionController from './controllers/transcription'
 import NotificationController from './controllers/notification'
+import { LanguageToggleController } from './controllers/language-toggle'
+import ComboboxController from './controllers/combobox'
+import PublishOptionsController from './controllers/publish-options'
 
 // update the global window type. This is needed for the window.stimulus line below.
 // otherwise, the transpiler complains
@@ -23,3 +26,6 @@ Stimulus.register('recorder', RecorderController)
 Stimulus.register('recording', RecordingController)
 Stimulus.register('transcription', TranscriptionController)
 Stimulus.register('notification', NotificationController)
+Stimulus.register('language-toggle', LanguageToggleController)
+Stimulus.register('combobox', ComboboxController)
+Stimulus.register('publish-options', PublishOptionsController)

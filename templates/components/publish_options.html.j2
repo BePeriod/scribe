@@ -1,0 +1,100 @@
+<div data-controller="publish-options" class="grow">
+  <div class="relative">
+    <div class="hidden absolute bottom-0 left-0 w-72 z-50" data-publish-options-target="menu">
+      <div class="bg-white shadow">
+        <div class="flex bg-emerald-500 text-white p-4">
+          <h3 class="font-semibold text-lg">Publish Options</h3>
+          <div class="flex grow place-content-end ">
+            <button data-action="publish-options#hide">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                   stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+              {% include "components/touch_target.html.j2" %}
+            </button>
+          </div>
+        </div>
+        <div class="p-4 space-y-4">
+          <div class="flex gap-4 items-center ">
+            <div class="pr-4">
+              <div
+                class="flex gap-2 items-center"
+                data-controller="language-toggle"
+                data-language-toggle-language-toggle-outlet=".language-toggle"
+              >
+                <label class="sr-only" for="all_enabled">
+                  <span>Toggle All</span>
+                  <input
+                    data-language-toggle-target="checkboxInput"
+                    type="checkbox"
+                    id="all_enabled"
+                    name="all_enabled"
+                  />
+                </label>
+                <img src="{{ url_for('static', path='/images/globe.svg') }}"
+                     class="h-6 -mt-1"
+                     alt="Globe" />
+                <div>
+                  <button type="button"
+                          data-language-toggle-target="btn"
+                          data-action="language-toggle#toggleAll"
+                          class="group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2"
+                          role="switch" aria-checked="false">
+                    <span class="sr-only">Toggle all languages</span>
+                    <span aria-hidden="true"
+                          class="pointer-events-none absolute h-full w-full rounded-md bg-white"></span>
+                    <!-- Enabled: "bg-emerald-600", Not Enabled: "bg-gray-200" -->
+                    <span aria-hidden="true"
+                          data-language-toggle-target="switchBackground"
+                          class="bg-gray-200 pointer-events-none absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out"></span>
+                    <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+                    <span aria-hidden="true"
+                          data-language-toggle-target="switchForeground"
+                          class="translate-x-0 pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out"></span>
+                    {% include "components/touch_target.html.j2" %}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="grow mt-0 flex space-x-2 place-content-end">
+              <div class="relative flex items-start">
+                <div class="flex h-6 items-center">
+                  <input id="pin_to_channel" name="pin_to_channel" type="checkbox"
+                         class="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-600">
+                </div>
+                <div class="ml-2 text-sm leading-6">
+                  <label for="pin_to_channel" class="font-medium text-gray-900">Pin</label>
+                </div>
+              </div>
+
+              <div class="relative flex items-start ">
+                <div class="flex h-6 items-center">
+                  <input id="notify_channel" name="notify_channel" type="checkbox"
+                         class="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-600">
+                </div>
+                <div class="ml-2 text-sm leading-6">
+                  <label for="notify_channel" class="font-medium text-gray-900">Notify</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% for language in languages %}
+            {% include "components/language_settings.html.j2" %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <button data-action="publish-options#show">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+           class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+      </svg>
+
+      {% include "components/touch_target.html.j2" %}
+    </button>
+  </div>
+
+</div>

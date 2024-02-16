@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Annotated, List, Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, Form, Query, Request, UploadFile
+from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sse_starlette.sse import EventSourceResponse
@@ -476,4 +476,34 @@ def notify(
         # This is due to how browsers handle page history with form submissions.
         status_code=200,
         headers={"Content-Type": "text/vnd.turbo-stream.html; charset=utf-8"},
+    )
+
+
+@router.get("/tests", response_class=HTMLResponse)
+def tests(request: Request):
+    if not settings.DEVELOPMENT_MODE:
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    return _templates.TemplateResponse(
+        "pages/tests.html.j2",
+        {
+            "request": request,
+            "user": None,
+            "notifications": None,
+            "recording": Recording(
+                id="123", file_path="test.mp4", transcription="test"
+            ),
+            "channels": [
+                {"id": "123", "name": "My Channel"},
+                {"id": "456", "name": "Your Channel"},
+            ],
+            "languages": [
+                {"language_code": "en", "country_code": "us", "default_channel": "123"},
+                {"language_code": "es", "country_code": "es"},
+                {"language_code": "fr", "country_code": "fr", "default_channel": "456"},
+                {"language_code": "it", "country_code": "it", "default_channel": "123"},
+                {"language_code": "pt", "country_code": "br", "default_channel": "123"},
+                {"language_code": "ru", "country_code": "ru", "default_channel": "123"},
+            ],
+        },
     )

@@ -1,0 +1,34 @@
+<div class="flex gap-2 items-center language-toggle" data-controller="language-toggle">
+  <label class="sr-only" for="{{ language.language_code + "_enabled" }}">
+    <span>{{ language | upper }}</span>
+    <input
+      data-language-toggle-target="checkboxInput"
+      type="checkbox"
+      id="{{ language.language_code + "_enabled" }}"
+      name="{{ language.language_code + "_enabled" }}"
+    />
+  </label>
+  <img src="{{ url_for('static', path='/images/flags/4x3/' +  language.country_code  + '.svg') }}"
+       class="h-5  -mt-1 shadow border border-gray-200"
+       alt={{ language.country_code | upper + " flag" }} />
+  <div>
+    <button type="button"
+            data-language-toggle-target="btn"
+            data-action="language-toggle#toggle"
+            class="group relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:ring-offset-2"
+            role="switch" aria-checked="false">
+      <span class="sr-only">Send {{ language.language_code }} text</span>
+      <span aria-hidden="true"
+            class="pointer-events-none absolute h-full w-full rounded-md bg-white"></span>
+      <!-- Enabled: "bg-emerald-600", Not Enabled: "bg-gray-200" -->
+      <span aria-hidden="true"
+            data-language-toggle-target="switchBackground"
+            class="bg-gray-200 pointer-events-none absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out"></span>
+      <!-- Enabled: "translate-x-5", Not Enabled: "translate-x-0" -->
+      <span aria-hidden="true"
+            data-language-toggle-target="switchForeground"
+            class="translate-x-0 pointer-events-none absolute left-0 inline-block h-5 w-5 transform rounded-full border border-gray-200 bg-white shadow ring-0 transition-transform duration-200 ease-in-out"></span>
+      {% include "components/touch_target.html.j2" %}
+    </button>
+  </div>
+</div>
