@@ -9,7 +9,7 @@ from fastapi import Depends
 from starlette.requests import Request
 
 from scribe.exceptions import NotAuthenticatedException
-from scribe.models.models import Notification, User
+from scribe.models.models import Channel, Notification, User
 from scribe.session.session import Session, SessionStore
 from scribe.slack.slack import SlackClient
 
@@ -52,6 +52,21 @@ def session_user(session: Annotated[Session, Depends(get_session)]) -> User:
         raise NotAuthenticatedException("Not authenticated")
 
     return user
+
+
+def session_channels(
+    session: Annotated[Session, Depends(get_session)]
+) -> List[Channel]:
+    """
+    Retrieve the active User's channels or throw an authentication exception
+    :param session: The active session
+    :return: a list of Channel objects
+    """
+    channels = session.get("channels")
+    if channels is None:
+        raise NotAuthenticatedException("Not authenticated")
+
+    return channels
 
 
 def slack_client(session: Annotated[Session, Depends(get_session)]) -> SlackClient:

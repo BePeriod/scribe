@@ -1,15 +1,14 @@
 <div
   data-controller="combobox"
-  data-action="click@window->combobox#clickOutside"
   data-combobox-channel-value="{{ channels | selectattr("id", "equalto", language.default_channel) | map(attribute='name') | first }}"
 >
   <label for="{{ language.language_code + "_channel_name" }}"
          class="block text-sm font-medium leading-6 text-gray-900 sr-only">{{ label }}</label>
   <div class="relative"
-       data-action="keyup.up->combobox#prev keyup.down->combobox#next keyup.enter->combobox#selectActive">
+       data-action="keyup.up->combobox#prev keyup.down->combobox#next keydown.enter->combobox#selectActive">
     <input type="hidden"
            data-combobox-target="hiddenInput"
-
+           autocomplete="off"
            id="{{ language.language_code + "_channel_id" }}"
            name="{{ language.language_code + "_channel_id" }}"
            value="{{ language.default_channel if language.default_channel is not none }}"

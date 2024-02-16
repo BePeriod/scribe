@@ -150,7 +150,7 @@ class SlackClient:
 
     def publish(
         self,
-        messages: dict[str, str],
+        messages: dict[str, dict[str, str]],
         post_image: Optional[UploadFile],
         pin_to_channel: bool,
         notify_channel: bool,
@@ -198,17 +198,21 @@ class SlackClient:
                 if response["ok"] and pin_to_channel:
                     ts = response["ts"]
                     self.client.pins_add(channel=channel, timestamp=ts)
-                else:
+                if not response["ok"]:
                     logging.warning(f"failed to post message: {response['error']}")
 
 
-def _prepare_messages(messages: Dict[str, str], notify: bool) -> List[Tuple[str, str]]:
+def _prepare_messages(
+    messages: Dict[str, dict[str, str]], notify: bool
+) -> List[Tuple[str, str]]:
     res = []
     for target, message in messages.items():
-        channel = settings.SLACK_CHANNEL_LANGUAGE_MAP.get(target, None)
+        channel = message.get("channel_id", None)
         if not channel:
             raise SlackError(f"Channel not found for language: {target}")
-        res.append((channel, format_message(message, target, notify)))
+        res.append(
+            (channel, format_message(message.get("message", ""), target, notify))
+        )
     return res
 
 

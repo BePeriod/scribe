@@ -76,7 +76,8 @@ export default class extends Controller<HTMLElement> {
     this.setActive(option)
   }
 
-  selectActive(): void {
+  selectActive(event: Event): void {
+    event.preventDefault()
     if (this.activeOption) {
       const option = this.activeOption
       const channelId = option.dataset.channelId
@@ -101,7 +102,18 @@ export default class extends Controller<HTMLElement> {
     })
   }
 
-  reset(): void {
+  reset(event: FocusEvent): void {
+    const related = event.relatedTarget as HTMLElement | null
+    if (related instanceof HTMLLIElement && this.optionTargets.includes(related)) {
+      const channelId = related.dataset.channelId
+      const channelName = related.dataset.channelName
+
+      this.hiddenInputTarget.value = channelId ?? ''
+      this.filterInputTarget.value = channelName ?? ''
+      this.channelValue = channelName ?? ''
+      this.listboxTarget.classList.add('hidden')
+      this.setActive(related)
+    }
     this.filterInputTarget.value = this.channelValue
     this.listboxTarget.classList.add('hidden')
   }
@@ -127,16 +139,10 @@ export default class extends Controller<HTMLElement> {
   }
 
   clickOutside(event: Event): void {
-    //event.preventDefault()
-
     const target = event.target as HTMLElement | null
 
-    // Ignore event if clicked within element
-    if (target && (this.element === target || this.element.contains(target))) {
-      return
+    if (!this.listboxTarget.contains(target)) {
+      this.listboxTarget.classList.add('hidden')
     }
-
-    // Execute the actual action we're interested in
-    this.listboxTarget.classList.add('hidden')
   }
 }

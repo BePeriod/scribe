@@ -19,10 +19,17 @@ from scribe.config.settings import settings
 from scribe.dependencies import (
     consume_notifications,
     get_session,
+    session_channels,
     session_user,
     slack_client,
 )
-from scribe.models.models import Notification, NotificationType, Recording, User
+from scribe.models.models import (
+    Channel,
+    Notification,
+    NotificationType,
+    Recording,
+    User,
+)
 from scribe.session.session import Session
 from scribe.slack import slack
 from scribe.slack.slack import SlackClient, SlackError
@@ -40,7 +47,7 @@ _templates.env.globals["now"] = datetime.datetime.utcnow()
 @router.get("/", response_class=HTMLResponse)
 async def home(
     request: Request,
-    user: Annotated[str, Depends(session_user)],
+    user: Annotated[User, Depends(session_user)],
     notifications: Annotated[List[Notification], Depends(consume_notifications)],
 ):
     """
@@ -199,7 +206,9 @@ async def read_code(
         session.delete("nonce")
 
 
-async def transcription_event_generator(request: Request, recording: Recording):
+async def transcription_event_generator(
+    request: Request, recording: Recording, channels: List[Channel]
+):
     """
     Server Side Event Generator: Transcribes a recording and sends a message when done.
     :param request: The HTTP Request
@@ -212,11 +221,62 @@ async def transcription_event_generator(request: Request, recording: Recording):
             break
 
         try:
+            languages = [
+                {
+                    "language_code": "en",
+                    "country_code": "us",
+                    "default_channel": settings.SLACK_CHANNEL_LANGUAGE_MAP.get(
+                        "en", None
+                    ),
+                },
+                {
+                    "language_code": "es",
+                    "country_code": "es",
+                    "default_channel": settings.SLACK_CHANNEL_LANGUAGE_MAP.get(
+                        "es", None
+                    ),
+                },
+                {
+                    "language_code": "fr",
+                    "country_code": "fr",
+                    "default_channel": settings.SLACK_CHANNEL_LANGUAGE_MAP.get(
+                        "fr", None
+                    ),
+                },
+                {
+                    "language_code": "it",
+                    "country_code": "it",
+                    "default_channel": settings.SLACK_CHANNEL_LANGUAGE_MAP.get(
+                        "it", None
+                    ),
+                },
+                {
+                    "language_code": "pt",
+                    "country_code": "br",
+                    "default_channel": settings.SLACK_CHANNEL_LANGUAGE_MAP.get(
+                        "pt", None
+                    ),
+                },
+                {
+                    "language_code": "ru",
+                    "country_code": "ru",
+                    "default_channel": settings.SLACK_CHANNEL_LANGUAGE_MAP.get(
+                        "ru", None
+                    ),
+                },
+            ]
             recording.transcription = text.transcribe(recording.file_path)
             logging.debug("Transcription completed. Disconnecting now")
             data = _templates.get_template(
                 "streams/transcription_complete.html.j2"
-            ).render({"request": request, "recording": recording})
+            ).render(
+                {
+                    "request": request,
+                    "recording": recording,
+                    "languages": languages,
+                    "channels": channels,
+                }
+            )
             yield {"event": "message", "data": data}
         except RuntimeError as err:
             logging.warning(f"error transcribing audio: {err}")
@@ -316,6 +376,7 @@ async def transcribe_recording(
     request: Request,
     recording_id: str,
     _user: Annotated[User, Depends(session_user)],
+    channels: Annotated[List[Channel], Depends(session_channels)],
     session: Annotated[Session, Depends(get_session)],
 ):
     """
@@ -324,6 +385,7 @@ async def transcribe_recording(
     :param request: the HTTP request object
     :param recording_id: The id of the audio recording
     :param _user: active session user
+    :param channels: The channels the user has access to
     :param session: active Session object
     :return: SSE EventSourceResponse
     """
@@ -346,7 +408,7 @@ async def transcribe_recording(
             headers={"Content-Type": "text/vnd.turbo-stream.html; charset=utf-8"},
         )
 
-    event_generator = transcription_event_generator(request, recording)
+    event_generator = transcription_event_generator(request, recording, channels)
 
     return EventSourceResponse(
         event_generator,
@@ -363,6 +425,18 @@ async def publish(
     client: Annotated[SlackClient, Depends(slack_client)],
     pin_to_channel: Annotated[bool, Form()] = False,
     notify_channel: Annotated[bool, Form()] = False,
+    en_enabled: Annotated[bool, Form()] = False,
+    en_channel_id: Annotated[str, Form()] = "",
+    es_enabled: Annotated[bool, Form()] = False,
+    es_channel_id: Annotated[str, Form()] = "",
+    fr_enabled: Annotated[bool, Form()] = False,
+    fr_channel_id: Annotated[str, Form()] = "",
+    it_enabled: Annotated[bool, Form()] = False,
+    it_channel_id: Annotated[str, Form()] = "",
+    pt_enabled: Annotated[bool, Form()] = False,
+    pt_channel_id: Annotated[str, Form()] = "",
+    ru_enabled: Annotated[bool, Form()] = False,
+    ru_channel_id: Annotated[str, Form()] = "",
 ):
     """
     Translate a message and publish it to each language channel.
@@ -374,16 +448,72 @@ async def publish(
     :param client: SlackClient object
     :param pin_to_channel: flag for pinning messages to Slack channels
     :param notify_channel: Begin post with Dear @channel?
+    :param en_enabled: Send an English message?
+    :param en_channel_id: Channel to send English message to
+    :param es_enabled: Send a Spanish message?
+    :param es_channel_id: Channel to send Spanish messages to
+    :param fr_enabled:Send a French message?
+    :param fr_channel_id: Channel to send French message to
+    :param it_enabled: Send an Italian message?
+    :param it_channel_id: Channel to send Italian message to
+    :param pt_enabled: Send a Portuguese message?
+    :param pt_channel_id: Channel to send Portuguese to
+    :param ru_enabled: Send a Russian message?
+    :param ru_channel_id: Channel to send Russian message to
+
     :return: HTML Response
     """
     try:
         message = formatted_message.strip()
-        messages = {
-            settings.SOURCE_LANGUAGE: message,
-        } | {
-            target: text.translate(message, target)
-            for target in settings.TARGET_LANGUAGES
-        }
+        messages = {}
+
+        if en_enabled and en_channel_id != "":
+            messages["en"] = {"message": message, "channel_id": en_channel_id}
+
+        if es_enabled and es_channel_id != "":
+            messages["es"] = {
+                "message": text.translate(message, "es"),
+                "channel_id": es_channel_id,
+            }
+
+        if fr_enabled and fr_channel_id != "":
+            messages["fr"] = {
+                "message": text.translate(message, "fr"),
+                "channel_id": fr_channel_id,
+            }
+
+        if it_enabled and it_channel_id != "":
+            messages["it"] = {
+                "message": text.translate(message, "it"),
+                "channel_id": it_channel_id,
+            }
+
+        if pt_enabled and pt_channel_id != "":
+            messages["pt"] = {
+                "message": text.translate(message, "pt"),
+                "channel_id": pt_channel_id,
+            }
+
+        if ru_enabled and ru_channel_id != "":
+            messages["ru"] = {
+                "message": text.translate(message, "ru"),
+                "channel_id": ru_channel_id,
+            }
+
+        if messages == {}:
+            return _templates.TemplateResponse(
+                "streams/send_notification.html.j2",
+                {
+                    "request": request,
+                    "notification": Notification(
+                        type="error",
+                        title="Publishing Error",
+                        message="No languages selected.",
+                    ),
+                },
+                status_code=422,
+                headers={"Content-Type": "text/vnd.turbo-stream.html; charset=utf-8"},
+            )
 
         if post_image.size == 0:
             post_image = None
