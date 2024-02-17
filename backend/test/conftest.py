@@ -73,6 +73,16 @@ def user():
 
 
 @pytest.fixture()
+def channels():
+    return [
+        Channel(
+            id="U1234",
+            name="Channel One",
+        )
+    ]
+
+
+@pytest.fixture()
 def team():
     return Team(id="T1234", name="The Super Friends")
 
@@ -107,10 +117,11 @@ def empty_session(session_store):
 
 
 @pytest.fixture()
-def user_session(empty_session, user):
+def user_session(empty_session, user, channels):
     token = "123456"
     empty_session.set("access_token", token)
     empty_session.set("user", user)
+    empty_session.set("channels", channels)
 
     return empty_session
 
