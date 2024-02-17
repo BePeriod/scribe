@@ -122,31 +122,87 @@ class SlackClient:
             image=info.get("team", {}).get("icon", {}).get("image_68", ""),
         )
 
+    def users(self) -> dict[str, User]:
+        """
+        Retrieves the channel information from Slack for the access_token
+
+        :return: List[Channel]
+        """
+
+        users_list = {}
+        next_cursor = None
+        while True:
+            response = self.client.users_list(cursor=next_cursor)
+            if not response.get("ok", False):
+                raise SlackError(response.get("error"))
+            users = response.get("members", [])
+            for user in users:
+                if not user.get("is_bot", False):
+                    profile = user.get("profile", {})
+                    display_name = user.get("display_name", "")
+                    if display_name == "":
+                        display_name = (
+                            f"{profile.get('first_name', '')} "
+                            f"{profile.get('last_name', '')}"
+                        ).strip()
+                    if display_name == "":
+                        display_name = profile.get("real_name", "")
+
+                    if display_name != "":
+                        users_list[user.get("id", "")] = User(
+                            id=user.get("id", ""),
+                            real_name=profile.get("real_name", ""),
+                            real_name_normalized=profile.get(
+                                "real_name_normalized", ""
+                            ),
+                            first_name=profile.get("first_name", ""),
+                            last_name=profile.get("last_name", ""),
+                            display_name=display_name,
+                            image=profile.get("image_48", ""),
+                        )
+
+            next_cursor = response.get("response_metadata", {}).get("next_cursor", None)
+            if not next_cursor:
+                break
+
+        return users_list
+
     def channels(self) -> List[Channel]:
         """
         Retrieves the channel information from Slack for the access_token
 
         :return: List[Channel]
         """
+
+        users = self.users()
         channel_list = []
         next_cursor = None
         while True:
             response = self.client.conversations_list(
-                exclude_archived=True, cursor=next_cursor
+                exclude_archived=True,
+                cursor=next_cursor,
+                types="public_channel, private_channel, im",
             )
             if not response.get("ok", False):
                 raise SlackError(response.get("error"))
             channels = response.get("channels", [])
-            channel_list += [
-                Channel(id=channel.get("id", ""), name=channel.get("name", ""))
-                for channel in channels
-                if channel.get("is_channel", False) and channel.get("is_member", False)
-            ]
+            for channel in channels:
+                if channel.get("is_im", False):
+                    user = users.get(channel.get("user"), None)
+                    if user:
+                        channel_list.append(
+                            Channel(id=channel.get("id", ""), name=user.display_name)
+                        )
+                else:
+                    channel_list.append(
+                        Channel(id=channel.get("id", ""), name=channel.get("name", ""))
+                    )
+
             next_cursor = response.get("response_metadata", {}).get("next_cursor", None)
             if not next_cursor:
                 break
 
-        return channel_list
+        return sorted(channel_list, key=lambda x: x.name.lower())
 
     def publish(
         self,
