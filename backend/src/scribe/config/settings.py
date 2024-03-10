@@ -65,7 +65,7 @@ class Settings(BaseSettings):
     DEEPL_API_KEY: str = "your-deepl-api-key"
     PSEUDO_TRANSLATE: bool = False
     SLACK_OPENID_URL: str = "https://slack.com/openid/connect/authorize"
-    SLACK_AUTH_URL: str = "https://slack.com/oauth/v2/authorize?scope="
+    SLACK_AUTH_URL: str = "https://slack.com/oauth/v2/authorize"
     SLACK_TEAM_ID: str = "your-team-id"
     SLACK_CLIENT_ID: str = "your_client_id"
     SLACK_CLIENT_SECRET: str = "your_client_secret"
@@ -74,10 +74,16 @@ class Settings(BaseSettings):
     SLACK_USER_SCOPES: List[str] = [
         "channels:read",
         "chat:write",
+        "files:write",
+        "groups:read",
+        "groups:write",
         "identify",
+        "im:read",
+        "im:write",
         "pins:write",
         "team:read",
         "users.profile:read",
+        "users:read",
     ]
     UPLOAD_PATH: str = "/tmp/scribe"
     SOURCE_LANGUAGE: str = "en"

@@ -100,14 +100,11 @@ async def login(
     )
 
     auth_link = (
-        f"{settings.SLACK_AUTH_URL}?scope="
+        f"{settings.SLACK_AUTH_URL}?client_id={settings.SLACK_CLIENT_ID}"
+        f"&scope="
         f"&user_scope={ ','.join(settings.SLACK_USER_SCOPES) }"
-        f"&response_type=code"
         f"&state={ state }"
         f"&nonce={ nonce }"
-        f"&redirect_uri={slack.redirect_uri}"
-        f"&team={settings.SLACK_TEAM_ID}"
-        f"&client_id={settings.SLACK_CLIENT_ID}"
     )
 
     return _templates.TemplateResponse(
